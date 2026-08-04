@@ -2,6 +2,18 @@ import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
+function removeCrossorigin(): Plugin {
+  return {
+    name: 'remove-crossorigin',
+    enforce: 'post',
+    transformIndexHtml(html) {
+      return html.replace(/ crossorigin/g, '')
+    }
+  }
+}
+
+import type { Plugin } from 'vite'
+
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
@@ -20,6 +32,6 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react(), removeCrossorigin()]
   }
 })
