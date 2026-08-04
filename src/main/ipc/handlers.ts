@@ -1,4 +1,7 @@
 import { BrowserWindow } from 'electron'
+import { copyFileSync } from 'fs'
+import { join } from 'path'
+import { app } from 'electron'
 import { getJobs, getJobById, getAllSettings, saveAllSettings } from '../db/database'
 import { runSync } from '../sync/syncer'
 import { exportToExcel } from '../export/excelExport'
@@ -54,5 +57,31 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain, dialog: Electron.
     }
 
     return result.filePaths[0]
+  })
+
+  ipcMain.handle('db:backup', async (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender)
+    if (!window) return { success: false, error: 'Janela não encontrada' }
+
+    const result = await dialog.showSaveDialog(window, {
+      title: 'Salvar Backup do Banco de Dados',
+      defaultPath: `mimaki_backup_${new Date().toISOString().slice(0, 10)}.db`,
+      filters: [
+        { name: 'SQLite Database', extensions: ['db'] },
+        { name: 'Todos os arquivos', extensions: ['*'] }
+      ]
+    })
+
+    if (result.canceled || !result.filePath) {
+      return { success: false, error: 'Cancelado pelo usuário' }
+    }
+
+    try {
+      const dbPath = join(app.getPath('userData'), 'mimaki.db')
+      copyFileSync(dbPath, result.filePath)
+      return { success: true, path: result.filePath }
+    } catch (err: any) {
+      return { success: false, error: err.message }
+    }
   })
 }

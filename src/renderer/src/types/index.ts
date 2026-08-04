@@ -49,6 +49,7 @@ declare global {
       exportExcel: (opts: { startDate?: string; endDate?: string }) => Promise<{ filePath: string }>
       exportApi: () => Promise<{ count: number; error?: string }>
       openFolderDialog: () => Promise<string | null>
+      backupDatabase: () => Promise<{ success: boolean; path?: string; error?: string }>
       onTraySyncRequested: (callback: () => void) => () => void
     }
   }

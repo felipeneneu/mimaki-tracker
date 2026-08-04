@@ -53,6 +53,15 @@ export function Settings() {
     else alert(`API respondeu OK. Enviados: ${res.count}`)
   }
 
+  const handleBackup = async () => {
+    const res = await window.api.backupDatabase()
+    if (res.success) {
+      alert(`Backup salvo em:\n${res.path}`)
+    } else if (res.error !== 'Cancelado pelo usuário') {
+      alert(`Erro ao fazer backup: ${res.error}`)
+    }
+  }
+
   return (
     <>
       <TopBar title="Configurações" />
@@ -164,6 +173,20 @@ export function Settings() {
               />
             </div>
           </div>
+        </section>
+
+        {/* Backup do Banco */}
+        <section className="bg-bg-surface border border-bg-border rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-text-primary mb-2">Backup do Banco de Dados</h3>
+          <p className="text-xs text-text-muted mb-4">
+            Salva uma cópia do arquivo <code className="text-brand-pink">mimaki.db</code> com todos os jobs e configurações.
+          </p>
+          <button 
+            onClick={handleBackup}
+            className="bg-brand-pink hover:bg-brand-pink/80 text-white font-medium px-5 py-2 rounded-md shadow-sm transition-all text-sm"
+          >
+            Fazer Backup
+          </button>
         </section>
 
         {/* Footer actions */}

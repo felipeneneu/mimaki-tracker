@@ -29,6 +29,9 @@ const api = {
   // Diálogos nativos
   openFolderDialog: () => ipcRenderer.invoke('dialog:openFolder'),
 
+  // Backup do banco
+  backupDatabase: () => ipcRenderer.invoke('db:backup'),
+
   // Eventos do tray (escuta)
   onTraySyncRequested: (callback: () => void) => {
     ipcRenderer.on('tray:sync-requested', callback)
