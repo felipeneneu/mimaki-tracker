@@ -4,15 +4,15 @@ export function Sidebar() {
   const location = useLocation()
   
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/jobs', label: 'Histórico de Jobs', icon: '🖨️' },
-    { path: '/settings', label: 'Configurações', icon: '⚙️' },
+    { path: '/', label: 'Dashboard'},
+    { path: '/jobs', label: 'Histórico de Jobs'},
+    { path: '/settings', label: 'Configurações' },
   ]
 
   return (
     <aside className="w-64 bg-bg-surface border-r border-bg-border flex flex-col h-screen">
       <div className="p-6 flex items-center gap-3 border-b border-bg-border/50">
-        <img src="/images/logo-64x64.png" alt="DPI Mimaki" className="w-8 h-8 rounded shadow-[0_0_15px_rgba(82,37,130,0.5)]" />
+        <img src="./images/logo-64x64.png" alt="DPI Mimaki" className="w-8 h-8 rounded shadow-[0_0_15px_rgba(82,37,130,0.5)]" />
         <div>
           <h1 className="font-bold text-text-primary tracking-tight leading-tight">DPI Mimaki</h1>
           <p className="text-[10px] text-brand-pink uppercase tracking-widest font-semibold">Tracker</p>

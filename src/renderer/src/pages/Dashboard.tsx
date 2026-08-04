@@ -58,7 +58,6 @@ export function Dashboard() {
           <StatCard 
             title="Jobs (Últimos 30d)" 
             value={totalJobs} 
-            icon={<span className="text-xl">🖨️</span>}
           />
           <StatCard 
             title="Tinta Consumida" 
