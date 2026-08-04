@@ -1,0 +1,1433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_121" class="java.beans.XMLDecoder">
+ <object class="jp.mimaki.p2p.cmn.dir.ElementDir">
+  <void property="_VERSION">
+   <string>6.34</string>
+  </void>
+  <void property="belongLayers">
+   <object class="java.util.TreeMap">
+    <void method="put">
+     <int>1</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>2</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>3</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>4</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>131</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>133</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>136</int>
+     <int>65793</int>
+    </void>
+    <void method="put">
+     <int>137</int>
+     <int>65793</int>
+    </void>
+   </object>
+  </void>
+  <void property="brailleProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropBraille">
+    <void property="braillType">
+     <int>0</int>
+    </void>
+    <void property="posiBraille">
+     <object class="java.util.TreeMap"/>
+    </void>
+    <void property="printerNo">
+     <int>1</int>
+    </void>
+    <void property="propertyMap">
+     <object class="java.util.TreeMap"/>
+    </void>
+   </object>
+  </void>
+  <void property="colorReplaceFile">
+   <string>ColorReplace.properties</string>
+  </void>
+  <void property="compositionRecommendType">
+   <int>0</int>
+  </void>
+  <void property="cutModeProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropCutMode">
+    <void property="propertyMap">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <string>ColorNameCutCount</string>
+       <int>0</int>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+  <void property="editProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropEdit">
+    <void property="appSepCdInk">
+     <int>4</int>
+    </void>
+    <void property="calibrationCode">
+     <int>-1</int>
+    </void>
+    <void property="calibrationMode">
+     <int>2</int>
+    </void>
+    <void property="compatibleES3">
+     <boolean>false</boolean>
+    </void>
+    <void property="compatibleRLP5">
+     <boolean>false</boolean>
+    </void>
+    <void property="compatibleWhite">
+     <boolean>true</boolean>
+    </void>
+    <void property="deviceProfileCode">
+     <int>126</int>
+    </void>
+    <void property="deviceProfileName">
+     <string>UCJV3008CLUS1754C_3M-40C-10R_v35_F154859.icc</string>
+    </void>
+    <void property="dispTextureMakerSetting">
+     <boolean>false</boolean>
+    </void>
+    <void property="halftone">
+     <int>30</int>
+    </void>
+    <void property="lastPrintDate">
+     <object class="java.util.Date">
+      <long>1785431496351</long>
+     </object>
+    </void>
+    <void property="mirror">
+     <boolean>false</boolean>
+    </void>
+    <void property="monoColorReplacement">
+     <boolean>false</boolean>
+    </void>
+    <void property="printerNo">
+     <int>1</int>
+    </void>
+    <void property="propertyMap">
+     <object class="java.util.TreeMap"/>
+    </void>
+    <void property="reducedScaleDenominator">
+     <int>1</int>
+    </void>
+    <void property="reverse">
+     <boolean>false</boolean>
+    </void>
+    <void property="ripSepAngleBlack">
+     <float>45.0</float>
+    </void>
+    <void property="ripSepAngleCyan">
+     <float>15.0</float>
+    </void>
+    <void property="ripSepAngleMagenta">
+     <float>75.0</float>
+    </void>
+    <void property="ripSepAngleYellow">
+     <float>0.0</float>
+    </void>
+    <void property="ripSepCdInk">
+     <int>4</int>
+    </void>
+    <void property="ripSepLpi">
+     <int>45</int>
+    </void>
+    <void property="ripSepPrintBlack">
+     <boolean>true</boolean>
+    </void>
+    <void property="ripSepPrintCyan">
+     <boolean>true</boolean>
+    </void>
+    <void property="ripSepPrintMagenta">
+     <boolean>true</boolean>
+    </void>
+    <void property="ripSepPrintYellow">
+     <boolean>true</boolean>
+    </void>
+    <void property="ripSepShape">
+     <int>0</int>
+    </void>
+    <void property="smoothGradation">
+     <boolean>false</boolean>
+    </void>
+    <void property="specialColorComposition">
+     <boolean>false</boolean>
+    </void>
+    <void property="specialColorCompositionArea">
+     <int>1</int>
+    </void>
+    <void property="specialColorSizeCorrection">
+     <boolean>false</boolean>
+    </void>
+    <void property="specialColorSizeCorrectionMap">
+     <object class="java.util.HashMap">
+      <void method="put">
+       <string>24</string>
+       <object class="jp.mimaki.p2p.cmn.properties.PropSizeCorrection">
+        <void property="specialColorSizeCorrection">
+         <boolean>false</boolean>
+        </void>
+        <void property="specialColorSizeCorrectionMethod">
+         <int>2</int>
+        </void>
+        <void property="specialColorSizeFeed">
+         <int>0</int>
+        </void>
+        <void property="specialColorSizeGradation">
+         <boolean>false</boolean>
+        </void>
+        <void property="specialColorSizeScan">
+         <int>0</int>
+        </void>
+       </object>
+      </void>
+      <void method="put">
+       <string>15</string>
+       <object class="jp.mimaki.p2p.cmn.properties.PropSizeCorrection">
+        <void property="specialColorSizeCorrection">
+         <boolean>false</boolean>
+        </void>
+        <void property="specialColorSizeCorrectionMethod">
+         <int>2</int>
+        </void>
+        <void property="specialColorSizeFeed">
+         <int>0</int>
+        </void>
+        <void property="specialColorSizeGradation">
+         <boolean>false</boolean>
+        </void>
+        <void property="specialColorSizeScan">
+         <int>0</int>
+        </void>
+       </object>
+      </void>
+     </object>
+    </void>
+    <void property="specialColorSizeCorrectionMethod">
+     <int>2</int>
+    </void>
+    <void property="specialColorSizeFeed">
+     <int>0</int>
+    </void>
+    <void property="specialColorSizeGradation">
+     <boolean>false</boolean>
+    </void>
+    <void property="specialColorSizeScan">
+     <int>0</int>
+    </void>
+    <void property="specialColorset">
+     <int>31</int>
+    </void>
+    <void property="specialInkEmphasis">
+     <boolean>false</boolean>
+    </void>
+    <void property="specialInkEmphasisCmykPoint">
+     <int>0</int>
+    </void>
+    <void property="specialInkEmphasisRgbPoint">
+     <int>255</int>
+    </void>
+    <void property="usedCorrection">
+     <boolean>false</boolean>
+    </void>
+    <void property="usedCorrectionKind">
+     <int>0</int>
+    </void>
+   </object>
+  </void>
+  <void property="embeddedProfile">
+   <string>embeddedProfile.icm</string>
+  </void>
+  <void property="favoriteCutCondition">
+   <int>0</int>
+  </void>
+  <void property="favoriteCutOffset">
+   <double>-1.0</double>
+  </void>
+  <void property="favoriteCutPress">
+   <int>-1</int>
+  </void>
+  <void property="favoriteCutSpeed">
+   <int>-1</int>
+  </void>
+  <void property="favoriteCutTool">
+   <string>CUT1</string>
+  </void>
+  <void property="jdfJobIDName">
+   <string></string>
+  </void>
+  <void property="jobBasisProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropJobBasis">
+    <void property="printerNo">
+     <int>1</int>
+    </void>
+    <void property="propertyMap">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <string>InitialCondition</string>
+       <string>UCJV300 BE86B073</string>
+      </void>
+      <void method="put">
+       <string>InputDir</string>
+       <string></string>
+      </void>
+      <void method="put">
+       <string>InputFileCount</string>
+       <int>1</int>
+      </void>
+      <void method="put">
+       <string>InputFile_0000</string>
+       <string>30782 - joaoa - adesivos - vinil transparente.pdf</string>
+      </void>
+      <void method="put">
+       <string>JobClass</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>JobName</string>
+       <string>30782 - joaoa - adesivos - vinil transparente.pdf</string>
+      </void>
+      <void method="put">
+       <string>Locked</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>ModelCode</string>
+       <string>1630</string>
+      </void>
+      <void method="put">
+       <string>ModelInnerCode</string>
+       <string>03</string>
+      </void>
+      <void method="put">
+       <string>ModelSubCode</string>
+       <string>01</string>
+      </void>
+      <void method="put">
+       <string>PrinterNo</string>
+       <int>1</int>
+      </void>
+      <void method="put">
+       <string>ThroughHot</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>ThroughHotDir</string>
+       <string></string>
+      </void>
+      <void method="put">
+       <string>ThroughPrinterDriver</string>
+       <boolean>false</boolean>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+  <void property="limitSpecialColorInk">
+   <object class="java.util.TreeMap">
+    <void method="put">
+     <int>15</int>
+     <boolean>true</boolean>
+    </void>
+    <void method="put">
+     <int>24</int>
+     <boolean>true</boolean>
+    </void>
+   </object>
+  </void>
+  <void property="matchingPresetName">
+   <string>(Mimaki_Expand_Color)</string>
+  </void>
+  <void property="method">
+   <int>4</int>
+  </void>
+  <void property="mmkPdf">
+   <boolean>false</boolean>
+  </void>
+  <void property="offsetFC">
+   <object class="jp.mimaki.cmn.math.PtDouble"/>
+  </void>
+  <void property="printerNo">
+   <int>1</int>
+  </void>
+  <void property="rasterizedFileBaseName">
+   <string>Raster</string>
+  </void>
+  <void property="rasterizedFilesSize">
+   <object class="java.util.TreeMap">
+    <void method="put">
+     <string>Raster_P0001_T000-000.row</string>
+     <long>0</long>
+    </void>
+   </object>
+  </void>
+  <void property="relationElementID">
+   <string></string>
+  </void>
+  <void property="ripProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropRip">
+    <void property="binaryFileBaseName">
+     <string>Rip</string>
+    </void>
+    <void property="binaryFileSize">
+     <long>0</long>
+    </void>
+    <void property="cmykFileBaseName">
+     <string>Rip</string>
+    </void>
+    <void property="cmykFileSize">
+     <long>0</long>
+    </void>
+    <void property="coreRenderingMode">
+     <int>0</int>
+    </void>
+    <void property="createRasterizedPng">
+     <boolean>false</boolean>
+    </void>
+    <void property="cutFileBaseName">
+     <string>Cut</string>
+    </void>
+    <void property="cutFileSize">
+     <long>0</long>
+    </void>
+    <void property="deviceProfileParameters">
+     <object class="jp.mimaki.cmn.util.TypecastTreeMap">
+      <void method="put">
+       <string>booleanDevUvIllUse</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanExchangeInkUse</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanMaskDownloadUse</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanPintMaskUse</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileAdjFeed</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileAftHeater</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileCalibrationCode</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileDotShotCtrl</string>
+       <boolean>true</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileExtHeater</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileHQmode</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileMediaSpeed</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfilePassCtrl</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfilePreHeater</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfilePrintModeSet</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfilePrnHeater</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileSd</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanProfileWaveForm</string>
+       <boolean>true</boolean>
+      </void>
+      <void method="put">
+       <string>booleanUvMmk6</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>booleanUvMode</string>
+       <boolean>false</boolean>
+      </void>
+      <void method="put">
+       <string>integerDevAdjAftHeaterVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjAftHeaterWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjExtHeaterVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjExtHeaterWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjFeedVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjFeedWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjMediaSpeedVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjMediaSpeedWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjPreHeaterVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjPreHeaterWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjPrnHeaterVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjPrnHeaterWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjUvModeVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerDevAdjUvModeWay</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerInkColorCode00</string>
+       <int>1</int>
+      </void>
+      <void method="put">
+       <string>integerInkColorCode01</string>
+       <int>2</int>
+      </void>
+      <void method="put">
+       <string>integerInkColorCode02</string>
+       <int>3</int>
+      </void>
+      <void method="put">
+       <string>integerInkColorCode03</string>
+       <int>4</int>
+      </void>
+      <void method="put">
+       <string>integerInkColorCount</string>
+       <int>4</int>
+      </void>
+      <void method="put">
+       <string>integerMaskDownloadByteSize</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerMaskDownloadDwordCount</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerPintMaskByteSize</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerPintMaskDwordCount</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileAdjFeedVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileAftHeaterVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfileBitsPerColor</string>
+       <int>2</int>
+      </void>
+      <void method="put">
+       <string>integerProfileCalibrationCodeVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfileDotShotCtrlVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileDpiDataFeed</string>
+       <int>600</int>
+      </void>
+      <void method="put">
+       <string>integerProfileDpiDataScan</string>
+       <int>600</int>
+      </void>
+      <void method="put">
+       <string>integerProfileDpiPrnFeed</string>
+       <int>600</int>
+      </void>
+      <void method="put">
+       <string>integerProfileDpiPrnScan</string>
+       <int>600</int>
+      </void>
+      <void method="put">
+       <string>integerProfileExtHeaterVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfileHQmodeVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileMediaSpeedVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlBandHeight</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity00</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity01</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity02</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity03</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity04</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity05</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity06</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity07</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity08</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity09</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity10</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity11</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity12</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity13</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity14</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlDensity15</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlFeedHeight</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlGizaHeight</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlGizaShape</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlGizaWidth</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlHeadDpi</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePassCtrlMaskCode</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePbColorsetCode</string>
+       <int>1</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePbInkMakerCode</string>
+       <int>5</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePbInkTypeCode</string>
+       <int>22</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePbInkVersion</string>
+       <int>6</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePbProfileInks</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePreHeaterVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePrintModeSetVal</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfilePrnHeaterVal</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSdDotParam00</string>
+       <int>3538993</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSdDotParam01</string>
+       <int>3145779</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSdDotParam02</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSdToneLevel</string>
+       <int>3</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor00</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor01</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor02</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor03</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor04</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor05</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor06</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor07</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor08</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor09</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor10</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor11</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor12</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor13</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor14</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor15</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor16</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor17</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor18</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotColor19</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileSlotInks</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>integerProfileWaveFormVal</string>
+       <int>2</int>
+      </void>
+      <void method="put">
+       <string>integerSlotNo00</string>
+       <int>1</int>
+      </void>
+      <void method="put">
+       <string>integerSlotNo01</string>
+       <int>2</int>
+      </void>
+      <void method="put">
+       <string>integerSlotNo02</string>
+       <int>3</int>
+      </void>
+      <void method="put">
+       <string>integerSlotNo03</string>
+       <int>4</int>
+      </void>
+      <void method="put">
+       <string>integerUvMode</string>
+       <int>-1</int>
+      </void>
+      <void method="put">
+       <string>integerUvSplitCount</string>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <string>stirngMPMVersion</string>
+       <string>MPM3_v3213B3221</string>
+      </void>
+     </object>
+    </void>
+    <void property="editedSize">
+     <object class="java.awt.Dimension" id="Dimension0">
+      <void class="java.awt.Dimension" method="getField">
+       <string>width</string>
+       <void method="set">
+        <object idref="Dimension0"/>
+        <int>16839</int>
+       </void>
+      </void>
+      <void class="java.awt.Dimension" method="getField">
+       <string>height</string>
+       <void method="set">
+        <object idref="Dimension0"/>
+        <int>4828</int>
+       </void>
+      </void>
+     </object>
+    </void>
+    <void property="expandOffsetSize">
+     <object class="java.awt.Dimension"/>
+    </void>
+    <void property="generateMriFile">
+     <boolean>false</boolean>
+    </void>
+    <void property="inkUsed">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <int>1</int>
+       <int>133</int>
+      </void>
+      <void method="put">
+       <int>2</int>
+       <int>214</int>
+      </void>
+      <void method="put">
+       <int>3</int>
+       <int>282</int>
+      </void>
+      <void method="put">
+       <int>4</int>
+       <int>138</int>
+      </void>
+      <void method="put">
+       <int>131</int>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <int>133</int>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <int>136</int>
+       <int>0</int>
+      </void>
+      <void method="put">
+       <int>137</int>
+       <int>0</int>
+      </void>
+     </object>
+    </void>
+    <void property="inkVolume">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <int>1</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>225</int>
+        </void>
+        <void index="1">
+         <int>137</int>
+        </void>
+        <void index="2">
+         <int>72</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>2</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>234</int>
+        </void>
+        <void index="1">
+         <int>140</int>
+        </void>
+        <void index="2">
+         <int>78</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>3</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>220</int>
+        </void>
+        <void index="1">
+         <int>131</int>
+        </void>
+        <void index="2">
+         <int>72</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>4</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>225</int>
+        </void>
+        <void index="1">
+         <int>132</int>
+        </void>
+        <void index="2">
+         <int>74</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>131</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>242</int>
+        </void>
+        <void index="1">
+         <int>164</int>
+        </void>
+        <void index="2">
+         <int>85</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>133</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>242</int>
+        </void>
+        <void index="1">
+         <int>164</int>
+        </void>
+        <void index="2">
+         <int>85</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>136</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>247</int>
+        </void>
+        <void index="1">
+         <int>155</int>
+        </void>
+        <void index="2">
+         <int>91</int>
+        </void>
+       </array>
+      </void>
+      <void method="put">
+       <int>137</int>
+       <array class="java.lang.Integer" length="3">
+        <void index="0">
+         <int>247</int>
+        </void>
+        <void index="1">
+         <int>155</int>
+        </void>
+        <void index="2">
+         <int>91</int>
+        </void>
+       </array>
+      </void>
+     </object>
+    </void>
+    <void property="labelPrinSize">
+     <object class="java.awt.Dimension"/>
+    </void>
+    <void property="pages">
+     <array class="int" length="1">
+      <void index="0">
+       <int>1</int>
+      </void>
+     </array>
+    </void>
+    <void property="printPlate">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <int>1</int>
+       <object class="java.util.TreeMap">
+        <void method="put">
+         <int>1</int>
+         <boolean>true</boolean>
+        </void>
+        <void method="put">
+         <int>2</int>
+         <boolean>true</boolean>
+        </void>
+        <void method="put">
+         <int>3</int>
+         <boolean>true</boolean>
+        </void>
+        <void method="put">
+         <int>4</int>
+         <boolean>true</boolean>
+        </void>
+        <void method="put">
+         <int>131</int>
+         <boolean>false</boolean>
+        </void>
+        <void method="put">
+         <int>133</int>
+         <boolean>false</boolean>
+        </void>
+        <void method="put">
+         <int>136</int>
+         <boolean>false</boolean>
+        </void>
+        <void method="put">
+         <int>137</int>
+         <boolean>false</boolean>
+        </void>
+       </object>
+      </void>
+     </object>
+    </void>
+    <void property="propertyMap">
+     <object class="java.util.TreeMap"/>
+    </void>
+    <void property="timeCmdPrn">
+     <long>238084</long>
+    </void>
+    <void property="timeCut">
+     <long>0</long>
+    </void>
+    <void property="timeEdtSep">
+     <long>0</long>
+    </void>
+    <void property="timeRIP">
+     <long>10791</long>
+    </void>
+    <void property="timeRIPnPrn">
+     <long>0</long>
+    </void>
+    <void property="timeVIP">
+     <long>0</long>
+    </void>
+   </object>
+  </void>
+  <void property="ripTileProperty">
+   <object class="java.util.TreeMap"/>
+  </void>
+  <void property="simpleStudioData">
+   <boolean>false</boolean>
+  </void>
+  <void property="spoolProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropSpool">
+    <void property="approximate">
+     <int>0</int>
+    </void>
+    <void property="autoCut">
+     <boolean>false</boolean>
+    </void>
+    <void property="autoCutDetail">
+     <boolean>false</boolean>
+    </void>
+    <void property="autoCutPosition">
+     <double>10.0</double>
+    </void>
+    <void property="bmfFileBaseName">
+     <string>PAGE</string>
+    </void>
+    <void property="channels">
+     <int>0</int>
+    </void>
+    <void property="clampPress">
+     <boolean>false</boolean>
+    </void>
+    <void property="clampPressCutEnds">
+     <int>4</int>
+    </void>
+    <void property="clampPressCutInner">
+     <int>1</int>
+    </void>
+    <void property="clampPressPrint">
+     <int>4</int>
+    </void>
+    <void property="clientType">
+     <int>0</int>
+    </void>
+    <void property="cmykRaster">
+     <boolean>true</boolean>
+    </void>
+    <void property="cmykVector">
+     <boolean>true</boolean>
+    </void>
+    <void property="colorSpace">
+     <int>1</int>
+    </void>
+    <void property="commentVersion">
+     <string></string>
+    </void>
+    <void property="copyCount">
+     <int>1</int>
+    </void>
+    <void property="copyMarginFeed">
+     <double>0.0</double>
+    </void>
+    <void property="copyMarginScan">
+     <double>0.0</double>
+    </void>
+    <void property="copyScanCount">
+     <int>1</int>
+    </void>
+    <void property="coreRenderingMode">
+     <int>0</int>
+    </void>
+    <void property="creator">
+     <string></string>
+    </void>
+    <void property="dataType">
+     <string></string>
+    </void>
+    <void property="date">
+     <object class="java.util.Date">
+      <long>1785431426000</long>
+     </object>
+    </void>
+    <void property="divisionNum">
+     <int>0</int>
+    </void>
+    <void property="dscCreater">
+     <string></string>
+    </void>
+    <void property="dscTitle">
+     <string></string>
+    </void>
+    <void property="feedDpi">
+     <double>18.01771108095189</double>
+    </void>
+    <void property="format">
+     <string>PDF</string>
+    </void>
+    <void property="grayRaster">
+     <boolean>false</boolean>
+    </void>
+    <void property="grayVector">
+     <boolean>false</boolean>
+    </void>
+    <void property="headWithdrawal">
+     <boolean>false</boolean>
+    </void>
+    <void property="jobMemo">
+     <string></string>
+    </void>
+    <void property="mirror">
+     <boolean>false</boolean>
+    </void>
+    <void property="offsetFeed">
+     <double>0.0</double>
+    </void>
+    <void property="offsetScan">
+     <double>0.0</double>
+    </void>
+    <void property="originUpdate">
+     <boolean>false</boolean>
+    </void>
+    <void property="osxAppType">
+     <int>0</int>
+    </void>
+    <void property="pages">
+     <int>1</int>
+    </void>
+    <void property="paperPoints">
+     <object class="jp.mimaki.cmn.math.DimDouble" id="DimDouble0">
+      <void class="jp.mimaki.cmn.math.DimDouble" method="getField">
+       <string>width</string>
+       <void method="set">
+        <object idref="DimDouble0"/>
+        <double>2020.776367168</double>
+       </void>
+      </void>
+      <void class="jp.mimaki.cmn.math.DimDouble" method="getField">
+       <string>height</string>
+       <void method="set">
+        <object idref="DimDouble0"/>
+        <double>579.429870592</double>
+       </void>
+      </void>
+     </object>
+    </void>
+    <void property="paperSize">
+     <object class="java.awt.Dimension" id="Dimension1">
+      <void class="java.awt.Dimension" method="getField">
+       <string>width</string>
+       <void method="set">
+        <object idref="Dimension1"/>
+        <int>1</int>
+       </void>
+      </void>
+      <void class="java.awt.Dimension" method="getField">
+       <string>height</string>
+       <void method="set">
+        <object idref="Dimension1"/>
+        <int>1</int>
+       </void>
+      </void>
+     </object>
+    </void>
+    <void property="preSeparationFileBaseName">
+     <string>PreSep</string>
+    </void>
+    <void property="presetName">
+     <string>UCJV300 BE86B073</string>
+    </void>
+    <void property="previewFileBaseName">
+     <string>Preview</string>
+    </void>
+    <void property="previewSize">
+     <object class="java.awt.Dimension" id="Dimension2">
+      <void class="java.awt.Dimension" method="getField">
+       <string>width</string>
+       <void method="set">
+        <object idref="Dimension2"/>
+        <int>505</int>
+       </void>
+      </void>
+      <void class="java.awt.Dimension" method="getField">
+       <string>height</string>
+       <void method="set">
+        <object idref="Dimension2"/>
+        <int>145</int>
+       </void>
+      </void>
+     </object>
+    </void>
+    <void property="printDataNo">
+     <int>1</int>
+    </void>
+    <void property="printDryTime">
+     <int>-1</int>
+    </void>
+    <void property="propertyMap">
+     <object class="java.util.TreeMap"/>
+    </void>
+    <void property="regMarkLineSize">
+     <double>0.3</double>
+    </void>
+    <void property="regMarkPosBottom">
+     <double>0.0</double>
+    </void>
+    <void property="regMarkPosLeft">
+     <double>0.0</double>
+    </void>
+    <void property="regMarkPosRight">
+     <double>0.0</double>
+    </void>
+    <void property="regMarkPosTop">
+     <double>0.0</double>
+    </void>
+    <void property="regMarkShape">
+     <int>0</int>
+    </void>
+    <void property="regMarkSize">
+     <double>4.0</double>
+    </void>
+    <void property="rgbRaster">
+     <boolean>false</boolean>
+    </void>
+    <void property="rgbVector">
+     <boolean>false</boolean>
+    </void>
+    <void property="rotate">
+     <int>0</int>
+    </void>
+    <void property="scaleFeed">
+     <double>0.0</double>
+    </void>
+    <void property="scaleScan">
+     <double>0.0</double>
+    </void>
+    <void property="scanDpi">
+     <double>17.99308453461202</double>
+    </void>
+    <void property="separationCut">
+     <boolean>false</boolean>
+    </void>
+    <void property="sheetFeed">
+     <boolean>false</boolean>
+    </void>
+    <void property="splitDirection">
+     <boolean>false</boolean>
+    </void>
+    <void property="spoolFileSize">
+     <long>15885995</long>
+    </void>
+    <void property="thumbnailFileBaseName">
+     <string>Thumbnail</string>
+    </void>
+    <void property="timeAnalyze">
+     <long>0</long>
+    </void>
+    <void property="timeJpeg">
+     <long>94</long>
+    </void>
+    <void property="timePreRIP">
+     <long>2362</long>
+    </void>
+    <void property="title">
+     <string></string>
+    </void>
+    <void property="tomboBackside">
+     <boolean>false</boolean>
+    </void>
+    <void property="tomboSeparation">
+     <boolean>false</boolean>
+    </void>
+    <void property="verticalPosition">
+     <double>0.0</double>
+    </void>
+    <void property="widthPosition">
+     <double>0.0</double>
+    </void>
+   </object>
+  </void>
+  <void property="spotColorProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropSpotColor">
+    <void property="propertyMap">
+     <object class="java.util.TreeMap">
+      <void method="put">
+       <string>0001</string>
+       <string>MimakiFCRM</string>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+  <void property="uiColorAdjustSet">
+   <string>Padrão</string>
+  </void>
+  <void property="variableProperty">
+   <object class="jp.mimaki.p2p.cmn.properties.PropVariable">
+    <void property="propertyMap">
+     <object class="java.util.TreeMap"/>
+    </void>
+   </object>
+  </void>
+ </object>
+</java>

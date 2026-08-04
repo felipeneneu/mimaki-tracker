@@ -1,0 +1,29 @@
+appId: br.com.dpi.mimaki-tracker
+productName: DPI Mimaki Tracker
+copyright: Copyright © 2026 DPI Gráfica
+
+directories:
+  output: dist-app
+  buildResources: ../images
+
+win:
+  icon: ../images/app_icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: ../images/app_icon.ico
+  installerHeaderIcon: ../images/app_icon.ico
+
+files:
+  - out/**/*
+  - "!**/*.map"
+
+extraResources:
+  - from: src/renderer/public/images
+    to: images
+
+asar: true

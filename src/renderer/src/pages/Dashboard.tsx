@@ -1,0 +1,159 @@
+import { Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Cell, PieChart, Pie } from 'recharts'
+import { TopBar } from '../components/layout/TopBar'
+import { StatCard } from '../components/ui/StatCard'
+import { Badge } from '../components/ui/Badge'
+import { useEffect, useState, useMemo } from 'react'
+import type { JobRow } from '../types'
+
+export function Dashboard() {
+  const [jobs, setJobs] = useState<JobRow[]>([])
+  
+  useEffect(() => {
+    // Busca jobs dos últimos 30 dias na montagem inicial
+    const d = new Date()
+    d.setDate(d.getDate() - 30)
+    window.api.jobsList({ startDate: d.toISOString().split('T')[0] })
+      .then(setJobs)
+      .catch(console.error)
+  }, [])
+
+  // Métricas
+  const totalJobs = jobs.length
+  const totalInk = jobs.reduce((acc, job) => acc + (job.ink_total_cc ?? 0), 0)
+
+  const cyanCc = jobs.reduce((acc, job) => acc + (job.ink_cyan_cc ?? 0), 0)
+  const magentaCc = jobs.reduce((acc, job) => acc + (job.ink_magenta_cc ?? 0), 0)
+  const yellowCc = jobs.reduce((acc, job) => acc + (job.ink_yellow_cc ?? 0), 0)
+  const blackCc = jobs.reduce((acc, job) => acc + (job.ink_black_cc ?? 0), 0)
+  const white1Cc = jobs.reduce((acc, job) => acc + (job.ink_white1_cc ?? 0), 0)
+  const white2Cc = jobs.reduce((acc, job) => acc + (job.ink_white2_cc ?? 0), 0)
+  const varnish1Cc = jobs.reduce((acc, job) => acc + (job.ink_varnish1_cc ?? 0), 0)
+  const varnish2Cc = jobs.reduce((acc, job) => acc + (job.ink_varnish2_cc ?? 0), 0)
+
+  const printTimeMs = jobs.reduce((acc, job) => acc + (job.print_time_ms ?? 0), 0)
+  const printTimeHours = printTimeMs / 1000 / 3600
+
+  // Gráfico de Pizza: Tintas individuais
+  const pieData = [
+    { name: 'Ciano', value: cyanCc, color: '#06b6d4' },
+    { name: 'Magenta', value: magentaCc, color: '#ec4899' },
+    { name: 'Amarelo', value: yellowCc, color: '#eab308' },
+    { name: 'Preto', value: blackCc, color: '#1c1917' },
+    { name: 'Branco 1', value: white1Cc, color: '#e2e8f0' },
+    { name: 'Branco 2', value: white2Cc, color: '#cbd5e1' },
+    { name: 'Verniz 1', value: varnish1Cc, color: '#818cf8' },
+    { name: 'Verniz 2', value: varnish2Cc, color: '#6366f1' }
+  ].filter(d => d.value > 0)
+
+  // Top Jobs Recentes (tabela)
+  const recentJobs = jobs.slice(0, 7)
+
+  return (
+    <>
+      <TopBar title="Dashboard" />
+      <div className="p-8 space-y-6">
+        
+        {/* CARDS */}
+        <div className="grid grid-cols-4 gap-5">
+          <StatCard 
+            title="Jobs (Últimos 30d)" 
+            value={totalJobs} 
+            icon={<span className="text-xl">🖨️</span>}
+          />
+          <StatCard 
+            title="Tinta Consumida" 
+            value={`${totalInk.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} cc`}
+            subtext="Todos os canais"
+          />
+          <StatCard 
+            title="Tempo de Máquina" 
+            value={`${printTimeHours.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} h`}
+            subtext="Imprimindo"
+          />
+          <div className="bg-bg-elevated border border-brand-pink/30 rounded-xl p-5 relative overflow-hidden flex flex-col justify-center items-center text-center">
+            <div className="absolute inset-0 bg-brand-pink/5 animate-pulse-slow"></div>
+            <p className="text-sm font-semibold text-text-muted mb-1 relative z-10">Receita & Lucro</p>
+            <p className="text-[11px] text-text-dim relative z-10 max-w-[80%]">Aguardando cruzamento com dados de venda e API Next.js.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-6">
+          {/* GRÁFICO PIZZA */}
+          <div className="col-span-1 bg-bg-surface border border-bg-border rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-text-primary mb-4">Consumo por Cor de Tinta (30d)</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={75}
+                    paddingAngle={2}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1e1830', borderColor: '#2d2545', borderRadius: '8px' }}
+                    itemStyle={{ color: '#f0edf8' }}
+                    formatter={(val: number, name: string) => [`${val.toFixed(2)} cc`, name]}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={40}
+                    formatter={(value) => <span className="text-[11px] text-text-muted">{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* TABELA RECENTES */}
+          <div className="col-span-2 bg-bg-surface border border-bg-border rounded-xl p-5 flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-semibold text-text-primary">Produção Recente</h3>
+            </div>
+            
+            <div className="flex-1 overflow-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="text-text-muted border-b border-bg-border">
+                    <th className="pb-3 font-medium">Pedido</th>
+                    <th className="pb-3 font-medium">Arquivo</th>
+                    <th className="pb-3 font-medium text-right">Tinta (cc)</th>
+                    <th className="pb-3 font-medium text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentJobs.length === 0 ? (
+                    <tr><td colSpan={4} className="text-center py-6 text-text-dim">Nenhum job sincronizado.</td></tr>
+                  ) : (
+                    recentJobs.map(job => (
+                      <tr key={job.id} className="border-b border-bg-border/50 hover:bg-bg-elevated transition-colors">
+                        <td className="py-3 font-medium text-brand-pink">{job.order_code ?? '—'}</td>
+                        <td className="py-3 text-text-primary truncate max-w-[200px]" title={job.job_name}>{job.job_name}</td>
+                        <td className="py-3 text-right tabular-nums">{job.ink_total_cc?.toFixed(2) ?? '—'}</td>
+                        <td className="py-3 text-center">
+                          {job.synced_to_api 
+                            ? <Badge variant="success">Sincronizado</Badge>
+                            : <Badge variant="warning">Pendente</Badge>
+                          }
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </>
+  )
+}

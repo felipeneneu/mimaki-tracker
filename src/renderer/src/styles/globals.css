@@ -1,0 +1,26 @@
+/* === CSS RESET & TAILWIND BASE === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg-base text-text-primary font-sans antialiased;
+    overflow: hidden; /* Evita scroll na janela inteira, controlado por áreas */
+  }
+
+  /* Scrollbar estilizadinha */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+  }
+}

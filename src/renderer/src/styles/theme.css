@@ -1,0 +1,57 @@
+:root {
+  /* DPI Brand — Cores extraídas do logo.svg */
+  --color-brand-purple: #522582;
+  --color-brand-pink: #d9428f;
+
+  /* Base Escura (Quase preto, com hint roxo) */
+  --color-bg-base: #0d0b14;
+  --color-bg-surface: #161222;
+  --color-bg-elevated: #1e1830;
+  --color-bg-border: #2d2545;
+
+  /* Accent (Marca) */
+  --color-accent: var(--color-brand-purple);
+  --color-accent-glow: #52258230;
+  --color-accent-pink: var(--color-brand-pink);
+  --color-accent-pink-soft: #d9428f25;
+
+  /* Texto */
+  --color-text-primary: #f0edf8;
+  --color-text-muted: #7c6fa0;
+  --color-text-dim: #4a3d6b;
+
+  /* Cores Funcionais (Canais de Tinta Mimaki) */
+  --color-ink-cyan: #22d3ee;
+  --color-ink-magenta: #f472b6;
+  --color-ink-yellow: #facc15;
+  --color-ink-black: #94a3b8;
+  --color-ink-white: #e2e8f0;
+  --color-ink-varnish: #818cf8;
+
+  /* Status */
+  --color-success: #4ade80;
+  --color-warning: #fb923c;
+  --color-error: #f87171;
+}
+
+/* Animação shimmer para barra de progresso */
+@keyframes shimmer {
+  0% { background-position: -200% 0 }
+  100% { background-position: 200% 0 }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #522582 0%, #d9428f 50%, #522582 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Animação pulse suave */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4 }
+  50% { opacity: 0.8 }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
