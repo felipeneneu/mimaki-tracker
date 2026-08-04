@@ -55,7 +55,6 @@
     },
     "files": [
       "out/**/*"
-    ],
-    "nativeRebuilder": "sequential"
+    ]
   }
 }
