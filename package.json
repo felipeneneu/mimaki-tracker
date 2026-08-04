@@ -47,6 +47,7 @@
     "extends": null,
     "appId": "br.com.dpi.mimaki-tracker",
     "productName": "DPI Mimaki Tracker",
+    "publish": null,
     "win": {
       "icon": "../images/app_icon.ico"
     },

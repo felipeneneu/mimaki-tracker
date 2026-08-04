@@ -6,6 +6,8 @@ directories:
   output: dist-app
   buildResources: ../images
 
+publish: null
+
 win:
   icon: ../images/app_icon.ico
   target:
