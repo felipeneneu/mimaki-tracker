@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
+import { HashRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { Sidebar } from './components/layout/Sidebar'
 import { TopBar } from './components/layout/TopBar'
 
@@ -21,7 +21,7 @@ function AppLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
@@ -30,7 +30,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
