@@ -1,9 +1,16 @@
 # Dependencies
 node_modules/
 
+# Agents (local only)
+agent/*
+
 # Build output
 out/
 dist-app/
+tsconfig.tsbuildinfo
+
+# Test data
+xml_teste/
 
 # OS files
 .DS_Store
