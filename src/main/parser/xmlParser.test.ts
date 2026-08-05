@@ -136,7 +136,7 @@ describe('formatMs', () => {
 
 describe('extração regex do jobName', () => {
   it('extrai quantidade quando há "unid" no nome', async () => {
-    const xml = xmlContent.replace(
+    const xml = xmlContent.replaceAll(
       '30782 - joaoa - adesivos - vinil transparente.pdf',
       '30782 - joaoa - adesivos - 50 unid - vinil transparente.pdf'
     )

@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, dialog, session } from 'electron'
+import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, session, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initDB, getSetting, setSetting } from './db/database'
 import { registerIpcHandlers } from './ipc/handlers'
 import { startScheduler, stopScheduler } from './sync/scheduler'
+import { setupAutoUpdater, stopAutoUpdater } from './updater'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -23,6 +24,7 @@ function createWindow(): void {
     minHeight: 650,
     show: false,
     frame: true,
+    autoHideMenuBar: true,
     backgroundColor: '#0d0b14',
     titleBarStyle: 'default',
     icon: getIconPath(),
@@ -38,7 +40,6 @@ function createWindow(): void {
     mainWindow?.show()
   })
 
-  // Minimiza para bandeja em vez de fechar
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
       event.preventDefault()
@@ -79,6 +80,7 @@ function createTray(): void {
       click: () => {
         app.isQuitting = true
         stopScheduler()
+        stopAutoUpdater()
         app.quit()
       }
     }
@@ -92,7 +94,6 @@ function createTray(): void {
   })
 }
 
-// Augmenta o tipo de app para permitir isQuitting
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Electron {
@@ -107,38 +108,62 @@ app.isQuitting = false
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('br.com.dpi.mimaki-tracker')
 
-  // CSP customizado ANTES de criar janela — permite Google Fonts
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        'Content-Security-Policy': [
-          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:;"
-        ]
-      }
-    })
+    if (is.dev) {
+      const headers = { ...details.responseHeaders }
+      delete headers['content-security-policy']
+      delete headers['Content-Security-Policy']
+      callback({ responseHeaders: headers })
+    } else {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': [
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://github.com;"
+          ]
+        }
+      })
+    }
   })
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // Inicializa banco de dados
-  initDB()
-
-  // Auto-salva path padrão do RasterLink se não existir
-  if (!getSetting('rasterlink_data_path')) {
-    setSetting('rasterlink_data_path', 'd:\\www\\2026\\felipe-neneu-portfolio\\dpi-tinta-mimaki\\mock_rasterlink_data\\MijSuite\\Jobs\\RL01\\Mf\\Elm')
+  try {
+    initDB()
+  } catch (err: any) {
+    console.error('[App] Falha ao inicializar banco:', err.message)
+    app.quit()
+    return
   }
 
-  // Registra todos os handlers IPC
-  registerIpcHandlers(ipcMain, dialog)
+  // Auto-migração: corrige path antigo que terminava com \Elm ou /Elm
+  const currentPath = getSetting('rasterlink_data_path')
+  if (currentPath && (currentPath.endsWith('\\Elm') || currentPath.endsWith('/Elm'))) {
+    const fixedPath = currentPath.replace(/[\\\/]Elm$/, '')
+    setSetting('rasterlink_data_path', fixedPath)
+    setSetting('last_sync_folder_timestamp', '')
+  }
+
+  if (!getSetting('rasterlink_data_path')) {
+    setSetting('rasterlink_data_path', 'd:\\www\\2026\\felipe-neneu-portfolio\\dpi-tinta-mimaki\\mock_rasterlink_data\\MijSuite\\Jobs\\RL01\\Mf')
+  }
+
+  registerIpcHandlers(ipcMain)
 
   createWindow()
   createTray()
 
-  // Inicia o agendador de sincronização
   startScheduler()
+
+  globalShortcut.register('Shift+T', () => {
+    mainWindow?.webContents.send('dev:toggle-terminal')
+  })
+
+  if (!is.dev && mainWindow) {
+    setupAutoUpdater(mainWindow)
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -150,7 +175,6 @@ app.whenReady().then(async () => {
 })
 
 app.on('window-all-closed', () => {
-  // No Windows/Linux, manter rodando na bandeja
   if (process.platform === 'darwin') {
     app.quit()
   }
@@ -158,5 +182,7 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   app.isQuitting = true
+  globalShortcut.unregisterAll()
   stopScheduler()
+  stopAutoUpdater()
 })

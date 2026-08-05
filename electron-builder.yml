@@ -6,7 +6,10 @@ directories:
   output: dist-app
   buildResources: ../images
 
-publish: null
+publish:
+  provider: github
+  owner: felipeneneu
+  repo: mimaki-tracker
 
 win:
   icon: ../images/app_icon.ico

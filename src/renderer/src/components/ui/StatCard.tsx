@@ -11,10 +11,10 @@ interface StatCardProps {
 
 export function StatCard({ title, value, subtext, icon, trend, trendValue }: StatCardProps) {
   return (
-    <div className="bg-bg-surface border border-bg-border rounded-xl p-5 flex flex-col hover:border-brand-purple/50 transition-colors">
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-text-muted text-sm font-medium">{title}</h3>
+    <div className="bg-bg-surface border border-bg-border rounded-xl p-5 flex flex-col items-center text-center hover:border-brand-purple/50 transition-colors">
+      <div className="flex items-center gap-2 mb-2">
         {icon && <div className="text-brand-pink/80">{icon}</div>}
+        <h3 className="text-text-muted text-sm font-medium">{title}</h3>
       </div>
       
       <div className="flex items-baseline gap-2">

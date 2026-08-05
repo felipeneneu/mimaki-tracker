@@ -24,6 +24,9 @@ export interface ParsedJob {
   spoolDate: string | null
   lastPrintDate: string | null
   pages: number | null
+  passCount: number | null
+  resolutionDpi: number | null
+  printDirection: string | null
   warnings: string[]
 }
 
@@ -40,18 +43,6 @@ function findVoidByProperty(voids: any[] | undefined, property: string): any | n
 /** Retorna o primeiro <object> filho de um void */
 function childObject(voidEl: any): any | null {
   return voidEl?.object?.[0] ?? null
-}
-
-/** Extrai valor <long> de um void */
-function longVal(voidEl: any): number | null {
-  const raw = voidEl?.long?.[0]
-  if (raw == null) return null
-  return parseInt(String(raw), 10)
-}
-
-/** Extrai valor <string> de um void */
-function stringVal(voidEl: any): string | null {
-  return voidEl?.string?.[0] ?? null
 }
 
 /**
@@ -308,6 +299,9 @@ export async function parseElementDirXml(xmlContent: string): Promise<ParsedJob>
     spoolDate,
     lastPrintDate,
     pages: typeof pages === 'number' ? pages : null,
+    passCount: null,
+    resolutionDpi: null,
+    printDirection: null,
     warnings
   }
 }
@@ -319,4 +313,118 @@ export function formatMs(ms: number | null): string {
   const min = Math.floor(totalSec / 60)
   const sec = totalSec % 60
   return min > 0 ? `${min}min ${sec}s` : `${sec}s`
+}
+
+// ────────────────────────────────────────────────────────────────
+// CompositeDir.xml parser — extrai elementID
+// ────────────────────────────────────────────────────────────────
+
+export async function parseCompositeDirXml(xmlContent: string): Promise<{ elementID: string | null; warnings: string[] }> {
+  const warnings: string[] = []
+  let root: any
+  try {
+    const parsed = await parseStringPromise(xmlContent, { explicitArray: true, mergeAttrs: false })
+    const objects = parsed?.java?.object ?? []
+    root = objects.find((o: any) => o?.$?.class === 'jp.mimaki.p2p.cmn.dir.CompositeDir')
+  } catch (e) {
+    throw new Error(`Falha ao parsear CompositeDir.xml: ${e}`)
+  }
+  if (!root) throw new Error('Estrutura XML inválida: root CompositeDir não encontrado')
+
+  const rootVoids: any[] = root?.void ?? []
+
+  // Procura elementID dentro de elements → PropElement
+  const elementsVoid = findVoidByProperty(rootVoids, 'elements')
+  const elementsObj = childObject(elementsVoid)
+  if (!elementsObj) {
+    warnings.push('CompositeDir: property "elements" não encontrada')
+    return { elementID: null, warnings }
+  }
+
+  // elements é um TreeMap<string, PropElement> — pega o primeiro valor
+  const puts = (elementsObj?.void ?? []).filter((v: any) => v?.$?.method === 'put')
+  for (const put of puts) {
+    const propElement = put?.object?.[0]
+    if (!propElement) continue
+    const elementIDVoid = findVoidByProperty(propElement?.void ?? [], 'elementID')
+    const elementID = elementIDVoid?.string?.[0] ?? null
+    if (elementID) return { elementID, warnings }
+  }
+
+  warnings.push('CompositeDir: elementID não encontrado em elements')
+  return { elementID: null, warnings }
+}
+
+// ────────────────────────────────────────────────────────────────
+// LayoutDir.xml parser — extrai compositeID, pass, resolution, direction
+// ────────────────────────────────────────────────────────────────
+
+export interface LayoutData {
+  compositeID: string | null
+  passCount: number | null
+  resolutionDpi: number | null
+  printDirection: string | null
+  warnings: string[]
+}
+
+export async function parseLayoutDirXml(xmlContent: string): Promise<LayoutData> {
+  const warnings: string[] = []
+  let root: any
+  try {
+    const parsed = await parseStringPromise(xmlContent, { explicitArray: true, mergeAttrs: false })
+    const objects = parsed?.java?.object ?? []
+    root = objects.find((o: any) => o?.$?.class === 'jp.mimaki.p2p.cmn.dir.LayoutDir')
+  } catch (e) {
+    throw new Error(`Falha ao parsear LayoutDir.xml: ${e}`)
+  }
+  if (!root) throw new Error('Estrutura XML inválida: root LayoutDir não encontrado')
+
+  const rootVoids: any[] = root?.void ?? []
+
+  // ── compositeID: dentro de composites → PropComposite → compositeID ──
+  let compositeID: string | null = null
+  const compositesVoid = findVoidByProperty(rootVoids, 'composites')
+  const compositesObj = childObject(compositesVoid)
+  if (compositesObj) {
+    const puts = (compositesObj?.void ?? []).filter((v: any) => v?.$?.method === 'put')
+    for (const put of puts) {
+      const propComposite = put?.object?.[0]
+      if (!propComposite) continue
+      const cidVoid = findVoidByProperty(propComposite?.void ?? [], 'compositeID')
+      const cid = cidVoid?.string?.[0] ?? null
+      if (cid) { compositeID = cid; break }
+    }
+  }
+  if (!compositeID) warnings.push('LayoutDir: compositeID não encontrado')
+
+  // ── feed properties: pass, feedResolution, scanDirection ──
+  let passCount: number | null = null
+  let resolutionDpi: number | null = null
+  let scanDirection: number | null = null
+
+  const feedsVoid = findVoidByProperty(rootVoids, 'feeds')
+  const feedsObj = childObject(feedsVoid)
+  if (feedsObj) {
+    const puts = (feedsObj?.void ?? []).filter((v: any) => v?.$?.method === 'put')
+    for (const put of puts) {
+      const propFeed = put?.object?.[0]
+      if (!propFeed) continue
+      const feedVoids: any[] = propFeed?.void ?? []
+
+      const passVoid = findVoidByProperty(feedVoids, 'pass')
+      if (passVoid?.int?.[0] != null) passCount = parseInt(String(passVoid.int[0]), 10)
+
+      const feedResVoid = findVoidByProperty(feedVoids, 'feedResolution')
+      if (feedResVoid?.int?.[0] != null) resolutionDpi = parseInt(String(feedResVoid.int[0]), 10)
+
+      const scanDirVoid = findVoidByProperty(feedVoids, 'scanDirection')
+      if (scanDirVoid?.int?.[0] != null) scanDirection = parseInt(String(scanDirVoid.int[0]), 10)
+
+      break // pega só o primeiro feed (001)
+    }
+  }
+
+  const printDirection = scanDirection === 1 ? 'bidirecional' : scanDirection === 0 ? 'unidirecional' : null
+
+  return { compositeID, passCount, resolutionDpi, printDirection, warnings }
 }

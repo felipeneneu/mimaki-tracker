@@ -9,12 +9,28 @@ export function getDB(): Database.Database {
   return db
 }
 
+export function closeDB(): void {
+  if (db) {
+    try {
+      db.pragma('wal_checkpoint(TRUNCATE)')
+    } catch {
+      // Ignora erro de WAL checkpoint no fechamento
+    }
+    db.close()
+    db = null as any
+  }
+}
+
 export function initDB(): void {
-  const dbPath = join(app.getPath('userData'), 'mimaki.db')
-  db = new Database(dbPath)
-  db.pragma('journal_mode = WAL')
-  db.pragma('foreign_keys = ON')
-  runMigrations()
+  try {
+    const dbPath = join(app.getPath('userData'), 'mimaki.db')
+    db = new Database(dbPath)
+    db.pragma('journal_mode = WAL')
+    db.pragma('foreign_keys = ON')
+    runMigrations()
+  } catch (err: any) {
+    throw new Error(`Falha ao inicializar banco de dados: ${err.message}`)
+  }
 }
 
 function runMigrations(): void {
@@ -41,6 +57,9 @@ function runMigrations(): void {
       spool_date             TEXT,
       last_print_date        TEXT,
       pages                  INTEGER,
+      pass_count             INTEGER,
+      resolution_dpi         INTEGER,
+      print_direction        TEXT,
       raw_xml_path           TEXT,
       synced_to_api          INTEGER DEFAULT 0,
       created_at             TEXT    DEFAULT (datetime('now'))
@@ -54,6 +73,12 @@ function runMigrations(): void {
       value TEXT
     );
   `)
+
+  const cols = db.prepare("PRAGMA table_info(jobs)").all() as { name: string }[]
+  const colNames = cols.map(c => c.name)
+  if (!colNames.includes('pass_count')) db.exec('ALTER TABLE jobs ADD COLUMN pass_count INTEGER')
+  if (!colNames.includes('resolution_dpi')) db.exec('ALTER TABLE jobs ADD COLUMN resolution_dpi INTEGER')
+  if (!colNames.includes('print_direction')) db.exec('ALTER TABLE jobs ADD COLUMN print_direction TEXT')
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -61,22 +86,34 @@ function runMigrations(): void {
 // ────────────────────────────────────────────────────────────────
 
 export function getSetting(key: string): string | null {
-  const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as
-    | { value: string }
-    | undefined
-  return row?.value ?? null
+  try {
+    const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as
+      | { value: string }
+      | undefined
+    return row?.value ?? null
+  } catch {
+    return null
+  }
 }
 
 export function setSetting(key: string, value: string): void {
-  db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value)
+  try {
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value)
+  } catch (err: any) {
+    console.error(`[DB] Erro ao salvar setting "${key}":`, err.message)
+  }
 }
 
 export function getAllSettings(): Record<string, string> {
-  const rows = db.prepare('SELECT key, value FROM settings').all() as {
-    key: string
-    value: string
-  }[]
-  return Object.fromEntries(rows.map((r) => [r.key, r.value]))
+  try {
+    const rows = db.prepare('SELECT key, value FROM settings').all() as {
+      key: string
+      value: string
+    }[]
+    return Object.fromEntries(rows.map((r) => [r.key, r.value]))
+  } catch {
+    return {}
+  }
 }
 
 export function saveAllSettings(settings: Record<string, string>): void {
@@ -115,66 +152,120 @@ export interface JobRow {
   spool_date: string | null
   last_print_date: string | null
   pages: number | null
+  pass_count: number | null
+  resolution_dpi: number | null
+  print_direction: string | null
   raw_xml_path: string | null
   synced_to_api: number
   created_at: string
 }
 
 export function insertJob(job: Omit<JobRow, 'id' | 'created_at' | 'synced_to_api'>): void {
-  db.prepare(`
-    INSERT OR IGNORE INTO jobs (
-      folder_timestamp, job_name, order_code, quantity_units,
-      ink_cyan_cc, ink_magenta_cc, ink_yellow_cc, ink_black_cc,
-      ink_white1_cc, ink_white2_cc, ink_varnish1_cc, ink_varnish2_cc,
-      ink_total_cc, print_time_ms, rip_time_ms,
-      width_mm, height_mm, spool_date, last_print_date,
-      pages, raw_xml_path
-    ) VALUES (
-      @folder_timestamp, @job_name, @order_code, @quantity_units,
-      @ink_cyan_cc, @ink_magenta_cc, @ink_yellow_cc, @ink_black_cc,
-      @ink_white1_cc, @ink_white2_cc, @ink_varnish1_cc, @ink_varnish2_cc,
-      @ink_total_cc, @print_time_ms, @rip_time_ms,
-      @width_mm, @height_mm, @spool_date, @last_print_date,
-      @pages, @raw_xml_path
-    )
-  `).run(job)
+  try {
+    db.prepare(`
+      INSERT OR REPLACE INTO jobs (
+        folder_timestamp, job_name, order_code, quantity_units,
+        ink_cyan_cc, ink_magenta_cc, ink_yellow_cc, ink_black_cc,
+        ink_white1_cc, ink_white2_cc, ink_varnish1_cc, ink_varnish2_cc,
+        ink_total_cc, print_time_ms, rip_time_ms,
+        width_mm, height_mm, spool_date, last_print_date,
+        pages, pass_count, resolution_dpi, print_direction, raw_xml_path
+      ) VALUES (
+        @folder_timestamp, @job_name, @order_code, @quantity_units,
+        @ink_cyan_cc, @ink_magenta_cc, @ink_yellow_cc, @ink_black_cc,
+        @ink_white1_cc, @ink_white2_cc, @ink_varnish1_cc, @ink_varnish2_cc,
+        @ink_total_cc, @print_time_ms, @rip_time_ms,
+        @width_mm, @height_mm, @spool_date, @last_print_date,
+        @pages, @pass_count, @resolution_dpi, @print_direction, @raw_xml_path
+      )
+    `).run(job)
+  } catch (err: any) {
+    console.error(`[DB] Erro ao inserir job ${job.folder_timestamp}:`, err.message)
+    throw err
+  }
 }
 
 export function getJobs(filters?: {
   startDate?: string
   endDate?: string
   search?: string
+  inkMin?: number
+  inkMax?: number
 }): JobRow[] {
-  let query = 'SELECT * FROM jobs WHERE 1=1'
-  const params: (string | number)[] = []
+  try {
+    let query = 'SELECT * FROM jobs WHERE 1=1'
+    const params: (string | number)[] = []
 
-  if (filters?.startDate) {
-    query += ' AND spool_date >= ?'
-    params.push(filters.startDate)
-  }
-  if (filters?.endDate) {
-    query += ' AND spool_date <= ?'
-    params.push(filters.endDate + 'T23:59:59')
-  }
-  if (filters?.search) {
-    query += ' AND (job_name LIKE ? OR order_code LIKE ?)'
-    const like = `%${filters.search}%`
-    params.push(like, like)
-  }
+    if (filters?.startDate) {
+      query += ' AND spool_date >= ?'
+      params.push(filters.startDate)
+    }
+    if (filters?.endDate) {
+      query += ' AND spool_date <= ?'
+      params.push(filters.endDate + 'T23:59:59')
+    }
+    if (filters?.search) {
+      query += ' AND (job_name LIKE ? OR order_code LIKE ?)'
+      const like = `%${filters.search}%`
+      params.push(like, like)
+    }
+    if (filters?.inkMin != null) {
+      query += ' AND ink_total_cc >= ?'
+      params.push(filters.inkMin)
+    }
+    if (filters?.inkMax != null) {
+      query += ' AND ink_total_cc <= ?'
+      params.push(filters.inkMax)
+    }
 
-  query += ' ORDER BY folder_timestamp DESC'
-  return db.prepare(query).all(...params) as JobRow[]
+    query += ' ORDER BY folder_timestamp DESC'
+    return db.prepare(query).all(...params) as JobRow[]
+  } catch (err: any) {
+    console.error('[DB] Erro ao buscar jobs:', err.message)
+    return []
+  }
 }
 
 export function getUnsyncedJobs(): JobRow[] {
-  return db.prepare('SELECT * FROM jobs WHERE synced_to_api = 0 ORDER BY folder_timestamp').all() as JobRow[]
+  try {
+    return db.prepare('SELECT * FROM jobs WHERE synced_to_api = 0 ORDER BY folder_timestamp').all() as JobRow[]
+  } catch {
+    return []
+  }
 }
 
 export function getJobById(id: number): JobRow | undefined {
-  return db.prepare('SELECT * FROM jobs WHERE id = ?').get(id) as JobRow | undefined
+  try {
+    return db.prepare('SELECT * FROM jobs WHERE id = ?').get(id) as JobRow | undefined
+  } catch {
+    return undefined
+  }
 }
 
 export function markJobsSynced(ids: number[]): void {
-  const placeholders = ids.map(() => '?').join(',')
-  db.prepare(`UPDATE jobs SET synced_to_api = 1 WHERE id IN (${placeholders})`).run(...ids)
+  if (ids.length === 0) return
+  try {
+    const placeholders = ids.map(() => '?').join(',')
+    db.prepare(`UPDATE jobs SET synced_to_api = 1 WHERE id IN (${placeholders})`).run(...ids)
+  } catch (err: any) {
+    console.error('[DB] Erro ao marcar jobs como sincronizados:', err.message)
+  }
+}
+
+// ────────────────────────────────────────────────────────────────
+// Dev password helpers
+// ────────────────────────────────────────────────────────────────
+
+import { createHash } from 'crypto'
+
+export function getDevPasswordHash(): string | null {
+  return getSetting('dev_terminal_password_hash')
+}
+
+export function setDevPasswordHash(hash: string): void {
+  setSetting('dev_terminal_password_hash', hash)
+}
+
+export function hashPassword(password: string): string {
+  return createHash('sha256').update(password).digest('hex')
 }

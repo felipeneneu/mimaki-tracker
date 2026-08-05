@@ -1,8 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { TopBar } from '../components/layout/TopBar'
-import { Badge } from '../components/ui/Badge'
-import { useEffect, useState } from 'react'
-import type { JobRow } from '../types'
+import { useQuery } from '@tanstack/react-query'
+import { CardSkeleton } from '../components/ui/Skeleton'
 
 function formatMs(ms: number | null): string {
   if (ms == null) return '—'
@@ -12,26 +11,27 @@ function formatMs(ms: number | null): string {
   return min > 0 ? `${min}min ${sec}s` : `${sec}s`
 }
 
-export function JobDetail() {
+export default function JobDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [job, setJob] = useState<JobRow | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (!id) return
-    window.api.jobsGetById(Number(id)).then(data => {
-      setJob(data)
-      setLoading(false)
-    })
-  }, [id])
+  const { data: job, isLoading } = useQuery({
+    queryKey: ['job', id],
+    queryFn: () => window.api.jobsGetById(Number(id)),
+    enabled: !!id,
+  })
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <TopBar title="Detalhe do Job" />
-        <div className="p-8 flex items-center justify-center h-64">
-          <p className="text-text-muted">Carregando...</p>
+        <div className="p-8 space-y-6 max-w-5xl">
+          <CardSkeleton />
+          <CardSkeleton />
+          <div className="grid grid-cols-2 gap-4">
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
         </div>
       </>
     )
@@ -45,7 +45,7 @@ export function JobDetail() {
           <p className="text-text-muted">Job não encontrado.</p>
           <button
             onClick={() => navigate('/jobs')}
-            className="text-brand-pink hover:underline text-sm"
+            className="text-brand-pink hover:underline text-sm transition-colors duration-200"
           >
             Voltar para a lista
           </button>
@@ -69,16 +69,14 @@ export function JobDetail() {
     <>
       <TopBar title="Detalhe do Job" />
       <div className="p-8 space-y-6 max-w-5xl">
-        {/* Botão voltar */}
         <button
           onClick={() => navigate('/jobs')}
-          className="text-sm text-text-muted hover:text-brand-pink transition-colors flex items-center gap-1"
+          className="text-sm text-text-muted hover:text-brand-pink transition-colors duration-200 flex items-center gap-1"
         >
           ← Voltar para a lista
         </button>
 
-        {/* Cabeçalho do job */}
-        <div className="bg-bg-surface border border-bg-border rounded-xl p-6">
+        <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1 min-w-0">
               <h2 className="text-lg font-semibold text-text-primary truncate" title={job.job_name}>
@@ -88,9 +86,6 @@ export function JobDetail() {
                 Pedido: <span className="text-brand-pink font-medium">{job.order_code ?? '—'}</span>
               </p>
             </div>
-            <Badge variant={job.synced_to_api ? 'success' : 'warning'}>
-              {job.synced_to_api ? 'Sincronizado' : 'Pendente'}
-            </Badge>
           </div>
 
           <div className="grid grid-cols-4 gap-4 text-sm">
@@ -121,13 +116,12 @@ export function JobDetail() {
           </div>
         </div>
 
-        {/* Tintas */}
-        <div className="bg-bg-surface border border-bg-border rounded-xl p-6">
+        <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
           <h3 className="text-sm font-semibold text-text-primary mb-4">Consumo de Tinta</h3>
 
           <div className="grid grid-cols-4 gap-3">
             {inkRows.map(row => (
-              <div key={row.label} className="flex items-center gap-3 bg-bg-base rounded-lg px-4 py-3">
+              <div key={row.label} className="flex items-center gap-3 bg-bg-base rounded-lg px-4 py-3 transition-colors duration-200 hover:bg-bg-elevated">
                 <div className={`w-3 h-3 rounded-full ${row.color} shrink-0`} />
                 <div className="min-w-0">
                   <p className="text-[11px] text-text-dim truncate">{row.label}</p>
@@ -139,7 +133,6 @@ export function JobDetail() {
             ))}
           </div>
 
-          {/* Total */}
           <div className="mt-4 pt-4 border-t border-bg-border flex items-center justify-between">
             <span className="text-sm font-semibold text-text-primary">Total</span>
             <span className="text-lg font-bold text-brand-pink tabular-nums">
@@ -148,15 +141,14 @@ export function JobDetail() {
           </div>
         </div>
 
-        {/* Tempos */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-bg-surface border border-bg-border rounded-xl p-6">
+          <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
             <h3 className="text-sm font-semibold text-text-primary mb-2">Tempo de Impressão</h3>
             <p className="text-2xl font-bold text-text-primary tabular-nums">
               {formatMs(job.print_time_ms)}
             </p>
           </div>
-          <div className="bg-bg-surface border border-bg-border rounded-xl p-6">
+          <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
             <h3 className="text-sm font-semibold text-text-primary mb-2">Tempo de RIP</h3>
             <p className="text-2xl font-bold text-text-primary tabular-nums">
               {formatMs(job.rip_time_ms)}
@@ -164,8 +156,27 @@ export function JobDetail() {
           </div>
         </div>
 
-        {/* Info técnica */}
-        <div className="bg-bg-surface border border-bg-border rounded-xl p-6">
+        <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
+          <h3 className="text-sm font-semibold text-text-primary mb-4">Informações de Impressão</h3>
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="text-text-dim text-xs mb-1">Passadas</p>
+              <p className="text-text-primary font-medium">{job.pass_count ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-text-dim text-xs mb-1">Resolução (DPI)</p>
+              <p className="text-text-primary font-medium">{job.resolution_dpi ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-text-dim text-xs mb-1">Direção</p>
+              <p className="text-text-primary font-medium">
+                {job.print_direction === 'bidirecional' ? 'Bidirecional' : job.print_direction === 'unidirecional' ? 'Unidirecional' : '—'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
           <h3 className="text-sm font-semibold text-text-primary mb-4">Informações Técnicas</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>

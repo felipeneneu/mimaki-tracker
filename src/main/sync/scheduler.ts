@@ -1,4 +1,5 @@
 import cron from 'node-cron'
+import { BrowserWindow } from 'electron'
 import { runSync } from './syncer'
 
 let task: cron.ScheduledTask | null = null
@@ -6,11 +7,19 @@ let task: cron.ScheduledTask | null = null
 export function startScheduler(): void {
   if (task) return
 
-  // Roda a cada 15 minutos
   task = cron.schedule('*/15 * * * *', async () => {
     console.log('[Scheduler] Iniciando sincronização automática...')
     try {
       const result = await runSync()
+
+      // Notifica todas as janelas sobre a conclusão
+      const windows = BrowserWindow.getAllWindows()
+      for (const win of windows) {
+        if (!win.isDestroyed()) {
+          win.webContents.send('sync:completed', result)
+        }
+      }
+
       if (result.errors.length > 0) {
         console.error('[Scheduler] Sincronização concluída com erros:', result.errors)
       } else if (result.imported > 0) {

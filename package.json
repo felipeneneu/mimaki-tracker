@@ -1,6 +1,6 @@
 {
   "name": "mimaki-tracker",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "DPI — Análise de produção Mimaki RasterLink6Plus",
   "main": "./out/main/index.js",
   "author": "DPI Gráfica",
@@ -11,19 +11,26 @@
     "preview": "electron-vite preview",
     "package": "npm run build && electron-builder",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.4",
     "better-sqlite3": "^9.4.3",
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.9",
     "exceljs": "^4.4.0",
     "node-cron": "^3.0.3",
     "react-router-dom": "^7.18.2",
+    "sonner": "^2.0.7",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/tsconfig": "^2.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "@playwright/test": "^1.62.1",
     "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^20.12.7",
     "@types/node-cron": "^3.0.11",

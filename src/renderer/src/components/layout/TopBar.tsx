@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useSync } from '../../hooks/useSync'
 
 interface SyncProgress {
   current: number
@@ -7,24 +10,31 @@ interface SyncProgress {
 }
 
 export function TopBar({ title }: { title: string }) {
-  const [isSyncing, setIsSyncing] = useState(false)
   const [progress, setProgress] = useState<SyncProgress | null>(null)
   const [lastSyncResult, setLastSyncResult] = useState<{ imported: number; errs: number; errors: string[] } | null>(null)
+  const syncMutation = useSync()
+  const qc = useQueryClient()
+
+  const isSyncing = syncMutation.isPending
 
   const handleSync = useCallback(async () => {
-    setIsSyncing(true)
     setLastSyncResult(null)
     setProgress(null)
     try {
-      const result = await window.api.syncRun()
+      const result = await syncMutation.mutateAsync()
       setLastSyncResult({ imported: result.imported, errs: result.errors.length, errors: result.errors })
+      if (result.imported > 0) {
+        toast.success(`${result.imported} job(s) sincronizado(s)!`)
+      } else if (result.errors.length === 0) {
+        toast.info('Nenhum job novo encontrado.')
+      }
     } catch (e) {
       setLastSyncResult({ imported: 0, errs: 1, errors: ['Erro de comunicação com o processo principal'] })
+      toast.error('Erro ao sincronizar')
     } finally {
-      setIsSyncing(false)
       setProgress(null)
     }
-  }, [])
+  }, [syncMutation])
 
   // Escuta progresso do sync
   useEffect(() => {
@@ -33,6 +43,15 @@ export function TopBar({ title }: { title: string }) {
     })
     return () => unsubscribe()
   }, [])
+
+  // Escuta conclusão do sync (vem do scheduler ou do botão)
+  useEffect(() => {
+    const unsubscribe = window.api.onSyncCompleted(() => {
+      qc.invalidateQueries({ queryKey: ['jobs'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
+    })
+    return () => unsubscribe()
+  }, [qc])
 
   // Escuta pedido de sync via Tray
   useEffect(() => {
@@ -45,54 +64,53 @@ export function TopBar({ title }: { title: string }) {
   const pct = progress ? Math.round((progress.current / progress.total) * 100) : 0
 
   return (
-    <header className="h-16 border-b border-bg-border bg-bg-base/80 backdrop-blur flex items-center justify-between px-8 sticky top-0 z-10">
+    <header className="h-16 border-b border-bg-border bg-bg-base/80 backdrop-blur flex items-center justify-between px-8 sticky top-0 z-10 shrink-0">
       <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
-      
-      <div className="flex items-center gap-4">
-        {/* Último resultado */}
-        {lastSyncResult && !isSyncing && (
-          <div className="flex flex-col items-end">
-            <span className="text-xs text-text-muted">
-              Último sync: {new Date().toLocaleTimeString()} 
-              <span className={lastSyncResult.errs > 0 ? 'text-error ml-1' : 'text-success ml-1'}>
-                ({lastSyncResult.imported} novos)
-              </span>
-            </span>
-            {lastSyncResult.errs > 0 && lastSyncResult.errors.length > 0 && (
-              <span className="text-[10px] text-error max-w-[300px] text-right truncate" title={lastSyncResult.errors.join('\n')}>
-                {lastSyncResult.errors[0]}
-              </span>
-            )}
-          </div>
-        )}
 
-        {/* Barra de progresso durante sync */}
-        {isSyncing && (
-          <div className="flex flex-col items-end gap-1 min-w-[220px]">
-            <span className="text-[11px] text-text-muted">
-              {progress
-                ? `Processando ${progress.current}/${progress.total} pastas`
-                : 'Iniciando sincronização...'
-              }
-            </span>
-            <div className="w-full h-2 bg-bg-elevated rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-300 ease-out animate-shimmer"
-                style={{ width: progress ? `${pct}%` : '0%' }}
-              />
-            </div>
-            {progress && (
-              <span className="text-[10px] text-text-dim font-mono truncate max-w-[220px]" title={progress.folder}>
-                {progress.folder}
+      <div className="flex items-center gap-4 h-full">
+        {/* Último resultado */}
+        <div className="flex flex-col items-end justify-center min-w-[180px] h-10">
+          {lastSyncResult && !isSyncing ? (
+            <>
+              <span className="text-xs text-text-muted">
+                Último sync: {new Date().toLocaleTimeString()}
+                <span className={lastSyncResult.errs > 0 ? 'text-error ml-1' : 'text-success ml-1'}>
+                  ({lastSyncResult.imported} novos)
+                </span>
               </span>
-            )}
-          </div>
-        )}
-        
-        <button 
+              {lastSyncResult.errs > 0 && lastSyncResult.errors.length > 0 && (
+                <span className="text-[10px] text-error max-w-[300px] text-right truncate" title={lastSyncResult.errors.join('\n')}>
+                  {lastSyncResult.errors[0]}
+                </span>
+              )}
+            </>
+          ) : isSyncing ? (
+            <>
+              <span className="text-[11px] text-text-muted">
+                {progress
+                  ? `Processando ${progress.current}/${progress.total} pastas`
+                  : 'Iniciando sincronização...'
+                }
+              </span>
+              <div className="w-full h-2 bg-bg-elevated rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300 ease-out animate-shimmer"
+                  style={{ width: progress ? `${pct}%` : '0%' }}
+                />
+              </div>
+              {progress && (
+                <span className="text-[10px] text-text-dim font-mono truncate max-w-[220px]" title={progress.folder}>
+                  {progress.folder}
+                </span>
+              )}
+            </>
+          ) : null}
+        </div>
+
+        <button
           onClick={handleSync}
           disabled={isSyncing}
-          className="bg-brand-purple hover:bg-brand-purple/80 text-white text-sm font-medium px-4 py-2 rounded-md shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="h-9 px-4 bg-brand-purple hover:bg-brand-purple/80 text-white text-sm font-medium rounded-md shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSyncing ? (
             <>
