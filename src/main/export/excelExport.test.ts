@@ -43,7 +43,7 @@ describe('exportToExcel', () => {
       print_time_ms: null, rip_time_ms: null,
       width_mm: null, height_mm: null,
       spool_date: null, last_print_date: null,
-      pages: null, pass_count: null, resolution_dpi: null,
+      pages: null, copy_number: null, pass_count: null, resolution_dpi: null,
       print_direction: null, raw_xml_path: null,
       synced_to_api: 0, created_at: '2026-01-01'
     }])

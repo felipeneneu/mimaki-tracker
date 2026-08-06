@@ -361,6 +361,7 @@ export async function parseCompositeDirXml(xmlContent: string): Promise<{ elemen
 
 export interface LayoutData {
   compositeID: string | null
+  copyNumber: number | null
   passCount: number | null
   resolutionDpi: number | null
   printDirection: string | null
@@ -381,8 +382,9 @@ export async function parseLayoutDirXml(xmlContent: string): Promise<LayoutData>
 
   const rootVoids: any[] = root?.void ?? []
 
-  // ── compositeID: dentro de composites → PropComposite → compositeID ──
+  // ── compositeID + copyNumber: dentro de composites → PropComposite ──
   let compositeID: string | null = null
+  let copyNumber: number | null = null
   const compositesVoid = findVoidByProperty(rootVoids, 'composites')
   const compositesObj = childObject(compositesVoid)
   if (compositesObj) {
@@ -390,9 +392,16 @@ export async function parseLayoutDirXml(xmlContent: string): Promise<LayoutData>
     for (const put of puts) {
       const propComposite = put?.object?.[0]
       if (!propComposite) continue
-      const cidVoid = findVoidByProperty(propComposite?.void ?? [], 'compositeID')
+      const compositeVoids: any[] = propComposite?.void ?? []
+      const cidVoid = findVoidByProperty(compositeVoids, 'compositeID')
       const cid = cidVoid?.string?.[0] ?? null
-      if (cid) { compositeID = cid; break }
+      const cnVoid = findVoidByProperty(compositeVoids, 'copyNumber')
+      const cn = cnVoid?.int?.[0] != null ? parseInt(String(cnVoid.int[0]), 10) : null
+      if (cid) {
+        compositeID = cid
+        copyNumber = cn
+        break
+      }
     }
   }
   if (!compositeID) warnings.push('LayoutDir: compositeID não encontrado')
@@ -426,5 +435,5 @@ export async function parseLayoutDirXml(xmlContent: string): Promise<LayoutData>
 
   const printDirection = scanDirection === 1 ? 'bidirecional' : scanDirection === 0 ? 'unidirecional' : null
 
-  return { compositeID, passCount, resolutionDpi, printDirection, warnings }
+  return { compositeID, copyNumber, passCount, resolutionDpi, printDirection, warnings }
 }

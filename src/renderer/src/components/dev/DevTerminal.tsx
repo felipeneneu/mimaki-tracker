@@ -11,6 +11,7 @@ const COMMANDS = [
   { cmd: 'show-db-path', desc: 'Mostra caminho do banco de dados' },
   { cmd: 'reset-checkpoint', desc: 'Reseta checkpoint de sincronização' },
   { cmd: 're-sync', desc: 'Força re-sincronização completa' },
+  { cmd: 'reprocess-copy', desc: 'Reprocessa copy_number de jobs existentes' },
   { cmd: 'clear-db', desc: 'Limpa o banco de dados (requer confirmação)' },
   { cmd: 'export-db', desc: 'Exporta cópia do banco de dados' },
   { cmd: 'open-data-folder', desc: 'Abre a pasta de dados no explorador' },

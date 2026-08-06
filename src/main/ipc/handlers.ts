@@ -1,13 +1,15 @@
 import { BrowserWindow, dialog, app, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import { copyFileSync, existsSync, unlinkSync } from 'fs'
+import { copyFileSync, existsSync, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import {
   getJobs, getJobById, getAllSettings, saveAllSettings,
   closeDB, getSetting, setSetting,
-  getDevPasswordHash, setDevPasswordHash, hashPassword
+  getDevPasswordHash, setDevPasswordHash, hashPassword,
+  updateJobCopyNumber
 } from '../db/database'
 import { runSync } from '../sync/syncer'
+import { parseLayoutDirXml } from '../parser/xmlParser'
 import { exportToExcel } from '../export/excelExport'
 import { syncToApi } from '../export/apiSync'
 import { checkForUpdates, quitAndInstall } from '../updater'
@@ -300,6 +302,7 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
               '  show-db-path      Mostra caminho do banco de dados',
               '  reset-checkpoint  Reseta checkpoint de sincronização',
               '  re-sync           Força re-sincronização completa',
+              '  reprocess-copy    Reprocessa copy_number de jobs existentes',
               '  clear-db          Limpa o banco de dados',
               '  export-db         Exporta cópia do banco de dados',
               '  open-data-folder  Abre a pasta de dados no explorador',
@@ -383,6 +386,41 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
           return { error: 'Pasta de dados não encontrada.' }
         }
 
+        case 'reprocess-copy': {
+          const jobs = getJobs()
+          if (jobs.length === 0) return { output: 'Nenhum job encontrado no banco.' }
+
+          let updated = 0
+          let errors = 0
+          for (const job of jobs) {
+            if (!job.raw_xml_path) { errors++; continue }
+            // Deriva o caminho do LayoutDir.xml a partir do raw_xml_path (ElementDir.xml)
+            const layPath = job.raw_xml_path
+              .replace(/\\Elm\\/, '\\Lay\\')
+              .replace(/\/Elm\//, '/Lay/')
+              .replace(/ElementDir\.xml$/, 'LayoutDir.xml')
+            if (!existsSync(layPath)) { errors++; continue }
+            try {
+              const xml = readFileSync(layPath, 'utf-8')
+              const layParsed = await parseLayoutDirXml(xml)
+              if (layParsed.copyNumber != null) {
+                updateJobCopyNumber(job.id, layParsed.copyNumber)
+                updated++
+              }
+            } catch {
+              errors++
+            }
+          }
+          return {
+            output: [
+              'Reprocessamento de copy_number concluído!',
+              `  Jobs encontrados: ${jobs.length}`,
+              `  Atualizados: ${updated}`,
+              `  Erros/skipados: ${errors}`,
+            ].join('\n')
+          }
+        }
+
         default:
           return {
             error: `Comando desconhecido: "${command}". Digite "help" para ver os comandos disponíveis.`
@@ -421,5 +459,23 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
     } catch {
       return false
     }
+  })
+
+  // ── Window controls (frameless) ────────────────────────────
+  ipcMain.handle('window:minimize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    win?.minimize()
+  })
+
+  ipcMain.handle('window:maximize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win) {
+      win.isMaximized() ? win.unmaximize() : win.maximize()
+    }
+  })
+
+  ipcMain.handle('window:close', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    win?.close()
   })
 }

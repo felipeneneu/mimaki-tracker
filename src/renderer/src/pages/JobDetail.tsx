@@ -158,7 +158,11 @@ export default function JobDetail() {
 
         <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-lg shadow-black/20">
           <h3 className="text-sm font-semibold text-text-primary mb-4">Informações de Impressão</h3>
-          <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-4 gap-4 text-sm">
+            <div>
+              <p className="text-text-dim text-xs mb-1">Cópias</p>
+              <p className="text-text-primary font-medium">{job.copy_number ?? '—'}</p>
+            </div>
             <div>
               <p className="text-text-dim text-xs mb-1">Passadas</p>
               <p className="text-text-primary font-medium">{job.pass_count ?? '—'}</p>

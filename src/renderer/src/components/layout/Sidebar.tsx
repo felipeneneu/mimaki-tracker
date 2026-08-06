@@ -10,7 +10,7 @@ export function Sidebar() {
   ]
 
   return (
-    <aside className="w-64 bg-bg-surface border-r border-bg-border flex flex-col h-screen">
+    <aside className="w-64 bg-bg-surface border-r border-bg-border flex flex-col h-screen pt-[38px]">
       <div className="p-6 flex items-center gap-3 border-b border-bg-border/50">
         <img src="./images/logo-64x64.png" alt="DPI Mimaki" className="w-8 h-8 rounded shadow-[0_0_15px_rgba(82,37,130,0.5)]" />
         <div>

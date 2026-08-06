@@ -57,6 +57,7 @@ function runMigrations(): void {
       spool_date             TEXT,
       last_print_date        TEXT,
       pages                  INTEGER,
+      copy_number            INTEGER,
       pass_count             INTEGER,
       resolution_dpi         INTEGER,
       print_direction        TEXT,
@@ -76,6 +77,7 @@ function runMigrations(): void {
 
   const cols = db.prepare("PRAGMA table_info(jobs)").all() as { name: string }[]
   const colNames = cols.map(c => c.name)
+  if (!colNames.includes('copy_number')) db.exec('ALTER TABLE jobs ADD COLUMN copy_number INTEGER')
   if (!colNames.includes('pass_count')) db.exec('ALTER TABLE jobs ADD COLUMN pass_count INTEGER')
   if (!colNames.includes('resolution_dpi')) db.exec('ALTER TABLE jobs ADD COLUMN resolution_dpi INTEGER')
   if (!colNames.includes('print_direction')) db.exec('ALTER TABLE jobs ADD COLUMN print_direction TEXT')
@@ -152,6 +154,7 @@ export interface JobRow {
   spool_date: string | null
   last_print_date: string | null
   pages: number | null
+  copy_number: number | null
   pass_count: number | null
   resolution_dpi: number | null
   print_direction: string | null
@@ -169,14 +172,14 @@ export function insertJob(job: Omit<JobRow, 'id' | 'created_at' | 'synced_to_api
         ink_white1_cc, ink_white2_cc, ink_varnish1_cc, ink_varnish2_cc,
         ink_total_cc, print_time_ms, rip_time_ms,
         width_mm, height_mm, spool_date, last_print_date,
-        pages, pass_count, resolution_dpi, print_direction, raw_xml_path
+        pages, copy_number, pass_count, resolution_dpi, print_direction, raw_xml_path
       ) VALUES (
         @folder_timestamp, @job_name, @order_code, @quantity_units,
         @ink_cyan_cc, @ink_magenta_cc, @ink_yellow_cc, @ink_black_cc,
         @ink_white1_cc, @ink_white2_cc, @ink_varnish1_cc, @ink_varnish2_cc,
         @ink_total_cc, @print_time_ms, @rip_time_ms,
         @width_mm, @height_mm, @spool_date, @last_print_date,
-        @pages, @pass_count, @resolution_dpi, @print_direction, @raw_xml_path
+        @pages, @copy_number, @pass_count, @resolution_dpi, @print_direction, @raw_xml_path
       )
     `).run(job)
   } catch (err: any) {
@@ -249,6 +252,14 @@ export function markJobsSynced(ids: number[]): void {
     db.prepare(`UPDATE jobs SET synced_to_api = 1 WHERE id IN (${placeholders})`).run(...ids)
   } catch (err: any) {
     console.error('[DB] Erro ao marcar jobs como sincronizados:', err.message)
+  }
+}
+
+export function updateJobCopyNumber(id: number, copyNumber: number | null): void {
+  try {
+    db.prepare('UPDATE jobs SET copy_number = ? WHERE id = ?').run(copyNumber, id)
+  } catch (err: any) {
+    console.error(`[DB] Erro ao atualizar copy_number do job ${id}:`, err.message)
   }
 }
 

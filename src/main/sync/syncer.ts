@@ -154,6 +154,7 @@ async function runSyncInternal(
       const parsed = await parseElementDirXml(elmXmlContent)
 
       // Busca pass/resolution/direction via índices
+      let copyNumber: number | null = null
       let passCount: number | null = null
       let resolutionDpi: number | null = null
       let printDirection: string | null = null
@@ -167,6 +168,7 @@ async function runSyncInternal(
             try {
               const layXmlContent = readFileSync(layXmlPath, 'utf-8')
               const layParsed = await parseLayoutDirXml(layXmlContent)
+              copyNumber = layParsed.copyNumber
               passCount = layParsed.passCount
               resolutionDpi = layParsed.resolutionDpi
               printDirection = layParsed.printDirection
@@ -198,6 +200,7 @@ async function runSyncInternal(
         spool_date: parsed.spoolDate,
         last_print_date: parsed.lastPrintDate,
         pages: parsed.pages,
+        copy_number: copyNumber,
         pass_count: passCount,
         resolution_dpi: resolutionDpi,
         print_direction: printDirection,

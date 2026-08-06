@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { Sidebar } from './components/layout/Sidebar'
+import { TitleBar } from './components/layout/TitleBar'
 import { DevTerminal } from './components/dev/DevTerminal'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -21,9 +22,10 @@ function PageLoader() {
 
 function AppLayout() {
   return (
-    <div className="flex h-screen bg-bg-base overflow-hidden">
+    <div className="flex h-screen bg-bg-base overflow-hidden rounded-xl">
+      <TitleBar />
       <Sidebar />
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-[38px]">
         <Suspense fallback={<PageLoader />}>
           <Outlet />
         </Suspense>

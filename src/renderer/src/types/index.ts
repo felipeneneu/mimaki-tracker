@@ -20,6 +20,7 @@ export interface JobRow {
   spool_date: string | null
   last_print_date: string | null
   pages: number | null
+  copy_number: number | null
   pass_count: number | null
   resolution_dpi: number | null
   print_direction: string | null
@@ -85,6 +86,11 @@ declare global {
       backupDatabase: () => Promise<{ success: boolean; path?: string; error?: string }>
       importDatabase: () => Promise<{ success: boolean; needsRestart?: boolean; error?: string }>
       restartApp: () => Promise<boolean>
+
+      // Window controls (frameless)
+      windowMinimize: () => Promise<void>
+      windowMaximize: () => Promise<void>
+      windowClose: () => Promise<void>
 
       // Terminal de dev
       openDevTools: () => Promise<boolean>

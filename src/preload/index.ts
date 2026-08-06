@@ -46,6 +46,11 @@ const api = {
   // Restart app
   restartApp: () => ipcRenderer.invoke('app:restart'),
 
+  // Window controls (frameless)
+  windowMinimize: () => ipcRenderer.invoke('window:minimize'),
+  windowMaximize: () => ipcRenderer.invoke('window:maximize'),
+  windowClose: () => ipcRenderer.invoke('window:close'),
+
   // Terminal de desenvolvimento
   openDevTools: () => ipcRenderer.invoke('dev:openTools'),
   runDevCommand: (command: string) => ipcRenderer.invoke('dev:runCommand', command),
