@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 
 export default function Settings() {
@@ -15,6 +15,11 @@ export default function Settings() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [folderStatus, setFolderStatus] = useState<{ valid: boolean; missing: string[] } | null>(null)
+  const [showClearModal, setShowClearModal] = useState(false)
+  const [clearPassword, setClearPassword] = useState('')
+  const [clearError, setClearError] = useState('')
+  const [clearing, setClearing] = useState(false)
+  const clearPasswordRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     window.api.settingsGet()
@@ -121,6 +126,24 @@ export default function Settings() {
       }
     } catch (err: any) {
       toast.error('Erro ao importar banco', { description: err.message })
+    }
+  }
+
+  const handleClearDatabase = async () => {
+    if (!clearPassword.trim()) return
+    setClearing(true)
+    setClearError('')
+    try {
+      const res = await window.api.clearDatabase(clearPassword)
+      if (res.success) {
+        toast.success('Banco limpo! Reiniciando o app...', { duration: 2000 })
+      } else {
+        setClearError(res.error || 'Erro ao limpar banco.')
+      }
+    } catch (err: any) {
+      setClearError(err.message || 'Erro ao limpar banco.')
+    } finally {
+      setClearing(false)
     }
   }
 
@@ -270,6 +293,12 @@ export default function Settings() {
             >
               Importar Backup
             </button>
+            <button
+              onClick={() => { setShowClearModal(true); setClearPassword(''); setClearError('') }}
+              className="bg-error/10 hover:bg-error/20 border border-error/30 text-error font-medium px-5 py-2 rounded-md shadow-sm transition-all duration-200 text-sm"
+            >
+              Limpar Banco
+            </button>
           </div>
         </section>
 
@@ -286,6 +315,56 @@ export default function Settings() {
         </div>
 
       </div>
+
+      {/* Modal Limpar Banco */}
+      {showClearModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-bg-surface border border-bg-border rounded-xl p-6 shadow-2xl shadow-black/50 w-[400px]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center">
+                <svg className="w-5 h-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">Limpar Banco de Dados</h3>
+                <p className="text-xs text-text-muted">Esta ação não pode ser desfeita.</p>
+              </div>
+            </div>
+            <p className="text-xs text-text-muted mb-4">
+              Isso irá apagar <strong className="text-error">TODOS</strong> os jobs e configurações. O app será reiniciado.
+            </p>
+            <input
+              ref={clearPasswordRef}
+              type="password"
+              value={clearPassword}
+              onChange={e => { setClearPassword(e.target.value); setClearError('') }}
+              onKeyDown={e => e.key === 'Enter' && handleClearDatabase()}
+              placeholder="Senha de desenvolvedor..."
+              className="w-full bg-bg-base border border-bg-border rounded-md px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-error transition-colors"
+              autoFocus
+            />
+            {clearError && (
+              <p className="text-xs text-error mt-2">{clearError}</p>
+            )}
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => { setShowClearModal(false); setClearPassword(''); setClearError('') }}
+                className="px-4 py-2 text-sm text-text-muted hover:text-text-primary transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleClearDatabase}
+                disabled={clearing || !clearPassword.trim()}
+                className="bg-error hover:bg-error/80 text-white text-sm font-medium px-4 py-2 rounded-md shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {clearing ? 'Limpando...' : 'Limpar e Reiniciar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

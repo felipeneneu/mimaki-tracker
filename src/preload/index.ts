@@ -43,6 +43,9 @@ const api = {
   // Importar banco
   importDatabase: () => ipcRenderer.invoke('db:import'),
 
+  // Limpar banco (com senha)
+  clearDatabase: (password: string) => ipcRenderer.invoke('db:clear', password),
+
   // Restart app
   restartApp: () => ipcRenderer.invoke('app:restart'),
 

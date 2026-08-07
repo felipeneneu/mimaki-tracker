@@ -85,6 +85,7 @@ declare global {
       // Backup/Import
       backupDatabase: () => Promise<{ success: boolean; path?: string; error?: string }>
       importDatabase: () => Promise<{ success: boolean; needsRestart?: boolean; error?: string }>
+      clearDatabase: (password: string) => Promise<{ success: boolean; error?: string }>
       restartApp: () => Promise<boolean>
 
       // Window controls (frameless)

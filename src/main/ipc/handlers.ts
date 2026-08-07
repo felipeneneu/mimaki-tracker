@@ -282,13 +282,30 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
     }
   })
 
+  // ── Limpar banco (com senha) ─────────────────────────────────
+  ipcMain.handle('db:clear', async (_, password: string) => {
+    try {
+      const hash = getDevPasswordHash()
+      if (!hash) {
+        return { success: false, error: 'Nenhuma senha de desenvolvedor configurada. Acesse o Terminal de Dev primeiro.' }
+      }
+      const inputHash = hashPassword(password)
+      if (inputHash !== hash) {
+        return { success: false, error: 'Senha incorreta.' }
+      }
+      closeDB()
+      const dbPath = join(app.getPath('userData'), 'mimaki.db')
+      if (existsSync(dbPath)) unlinkSync(dbPath)
+      app.relaunch()
+      app.exit(0)
+      return { success: true }
+    } catch (err: any) {
+      return { success: false, error: err.message }
+    }
+  })
+
   // ── Terminal de desenvolvimento ──────────────────────────────
   ipcMain.handle('dev:runCommand', async (_, command: string) => {
-    // Bloquear em produção sem senha
-    if (!is.dev) {
-      return { error: 'Terminal de desenvolvimento indisponível em produção.' }
-    }
-
     const cmd = command.trim().toLowerCase()
 
     try {
