@@ -25,7 +25,7 @@ function AppLayout() {
     <div className="flex h-screen bg-bg-base overflow-hidden rounded-xl">
       <TitleBar />
       <Sidebar />
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-[38px]">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-[102px]">
         <Suspense fallback={<PageLoader />}>
           <Outlet />
         </Suspense>
