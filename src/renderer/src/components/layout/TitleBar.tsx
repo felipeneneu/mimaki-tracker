@@ -1,6 +1,6 @@
 export function TitleBar() {
   return (
-    <div className="window-controls">
+    <div className="window-controls rounded-t-md">
       <button className="btn-close" onClick={() => window.api.windowClose()} title="Fechar">
         <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 3L9 9M9 3L3 9" />
