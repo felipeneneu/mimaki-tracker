@@ -1,5 +1,4 @@
 import { Tooltip, ResponsiveContainer, Legend, Cell, PieChart, Pie } from 'recharts'
-import { TopBar } from '../components/layout/TopBar'
 import { StatCard } from '../components/ui/StatCard'
 import { StatCardSkeleton, CardSkeleton } from '../components/ui/Skeleton'
 import { useDashboard } from '../hooks/useDashboard'
@@ -36,7 +35,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <TopBar title="Dashboard" />
       <div className="p-8 space-y-6">
 
         <div className="grid grid-cols-2 gap-5">

@@ -1,4 +1,3 @@
-import { TopBar } from '../components/layout/TopBar'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useJobs } from '../hooks/useJobs'
@@ -71,7 +70,6 @@ export default function JobsList() {
 
   return (
     <>
-      <TopBar title="Histórico de Jobs" />
       <div className="p-8 flex-1 flex flex-col min-h-0">
 
         <div className="flex flex-wrap items-end gap-4 mb-6">

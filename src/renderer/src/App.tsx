@@ -1,7 +1,8 @@
-import { HashRouter, Routes, Route, Outlet } from 'react-router-dom'
+import { HashRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { Sidebar } from './components/layout/Sidebar'
 import { TitleBar } from './components/layout/TitleBar'
+import { TopBar } from './components/layout/TopBar'
 import { DevTerminal } from './components/dev/DevTerminal'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -20,11 +21,21 @@ function PageLoader() {
   )
 }
 
+const routeTitles: Record<string, string> = {
+  '/': 'Dashboard',
+  '/jobs': 'Histórico de Jobs',
+  '/settings': 'Configurações',
+}
+
 function AppLayout() {
+  const { pathname } = useLocation()
+  const title = pathname.startsWith('/jobs/') ? 'Detalhe do Job' : routeTitles[pathname] ?? ''
+
   return (
     <div className="flex h-screen bg-bg-base overflow-hidden rounded-xl">
       <TitleBar />
       <Sidebar />
+      <TopBar title={title} />
       <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-[102px]">
         <Suspense fallback={<PageLoader />}>
           <Outlet />

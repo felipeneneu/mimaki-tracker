@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { TopBar } from '../components/layout/TopBar'
 import { useQuery } from '@tanstack/react-query'
 import { CardSkeleton } from '../components/ui/Skeleton'
 
@@ -24,7 +23,6 @@ export default function JobDetail() {
   if (isLoading) {
     return (
       <>
-        <TopBar title="Detalhe do Job" />
         <div className="p-8 space-y-6 max-w-5xl">
           <CardSkeleton />
           <CardSkeleton />
@@ -40,7 +38,6 @@ export default function JobDetail() {
   if (!job) {
     return (
       <>
-        <TopBar title="Detalhe do Job" />
         <div className="p-8 flex flex-col items-center justify-center h-64 gap-4">
           <p className="text-text-muted">Job não encontrado.</p>
           <button
@@ -67,7 +64,6 @@ export default function JobDetail() {
 
   return (
     <>
-      <TopBar title="Detalhe do Job" />
       <div className="p-8 space-y-6 max-w-5xl">
         <button
           onClick={() => navigate('/jobs')}

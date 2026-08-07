@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { TopBar } from '../components/layout/TopBar'
 import { toast } from 'sonner'
 
 export default function Settings() {
@@ -127,7 +126,6 @@ export default function Settings() {
 
   return (
     <>
-      <TopBar title="Configurações" />
       <div className="p-8 max-w-4xl space-y-8 pb-20">
 
         {/* Diretório */}
