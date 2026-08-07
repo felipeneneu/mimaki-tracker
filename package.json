@@ -1,6 +1,6 @@
 {
   "name": "mimaki-tracker",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "DPI — Análise de produção Mimaki RasterLink6Plus",
   "main": "./out/main/index.js",
   "author": "DPI Gráfica",

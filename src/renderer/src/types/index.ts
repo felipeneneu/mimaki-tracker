@@ -110,9 +110,6 @@ declare global {
       onUpdateDownloaded: (callback: (info: { version: string }) => void) => () => void
       onUpdateStatus: (callback: (status: string) => void) => () => void
       onUpdateError: (callback: (error: string) => void) => () => void
-
-      // Tray
-      onTraySyncRequested: (callback: () => void) => () => void
     }
   }
 }

@@ -53,18 +53,10 @@ export function TopBar({ title }: { title: string }) {
     return () => unsubscribe()
   }, [qc])
 
-  // Escuta pedido de sync via Tray
-  useEffect(() => {
-    const unsubscribe = window.api.onTraySyncRequested(() => {
-      handleSync()
-    })
-    return () => unsubscribe()
-  }, [handleSync])
-
   const pct = progress ? Math.round((progress.current / progress.total) * 100) : 0
 
   return (
-    <header className="h-16 border-b border-bg-border bg-bg-base/80 backdrop-blur flex items-center justify-between px-8 sticky top-0 z-10 shrink-0">
+    <header className="h-16 border-b border-bg-border bg-bg-base flex items-center justify-between px-8 sticky top-0 z-10 shrink-0">
       <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
 
       <div className="flex items-center gap-4 h-full">

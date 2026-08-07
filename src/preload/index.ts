@@ -101,12 +101,6 @@ const api = {
   onDevToggleTerminal: (callback: () => void) => {
     ipcRenderer.on('dev:toggle-terminal', callback)
     return () => ipcRenderer.removeListener('dev:toggle-terminal', callback)
-  },
-
-  // Eventos do tray (escuta)
-  onTraySyncRequested: (callback: () => void) => {
-    ipcRenderer.on('tray:sync-requested', callback)
-    return () => ipcRenderer.removeListener('tray:sync-requested', callback)
   }
 }
 

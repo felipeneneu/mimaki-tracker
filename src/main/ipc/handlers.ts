@@ -453,6 +453,7 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
   // ── Restart app ──────────────────────────────────────────────
   ipcMain.handle('app:restart', () => {
     try {
+      closeDB()
       app.relaunch()
       app.exit(0)
       return true

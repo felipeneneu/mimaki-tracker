@@ -1,13 +1,12 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, session, globalShortcut } from 'electron'
+import { app, BrowserWindow, ipcMain, session, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { initDB, getSetting, setSetting } from './db/database'
+import { initDB, getSetting, setSetting, closeDB } from './db/database'
 import { registerIpcHandlers } from './ipc/handlers'
 import { startScheduler, stopScheduler } from './sync/scheduler'
 import { setupAutoUpdater, stopAutoUpdater } from './updater'
 
 let mainWindow: BrowserWindow | null = null
-let tray: Tray | null = null
 
 function getIconPath(): string {
   if (is.dev) {
@@ -41,11 +40,8 @@ function createWindow(): void {
     mainWindow?.show()
   })
 
-  mainWindow.on('close', (event) => {
-    if (!app.isQuitting) {
-      event.preventDefault()
-      mainWindow?.hide()
-    }
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -55,56 +51,6 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
-
-function createTray(): void {
-  const icon = nativeImage.createFromPath(getIconPath())
-  tray = new Tray(icon.resize({ width: 16, height: 16 }))
-
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Abrir DPI Mimaki Tracker',
-      click: () => {
-        mainWindow?.show()
-        mainWindow?.focus()
-      }
-    },
-    { type: 'separator' },
-    {
-      label: 'Sincronizar Agora',
-      click: () => {
-        mainWindow?.webContents.send('tray:sync-requested')
-      }
-    },
-    { type: 'separator' },
-    {
-      label: 'Sair',
-      click: () => {
-        app.isQuitting = true
-        stopScheduler()
-        stopAutoUpdater()
-        app.quit()
-      }
-    }
-  ])
-
-  tray.setToolTip('DPI Mimaki Tracker')
-  tray.setContextMenu(contextMenu)
-  tray.on('double-click', () => {
-    mainWindow?.show()
-    mainWindow?.focus()
-  })
-}
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Electron {
-    interface App {
-      isQuitting: boolean
-    }
-  }
-}
-
-app.isQuitting = false
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('br.com.dpi.mimaki-tracker')
@@ -154,7 +100,6 @@ app.whenReady().then(async () => {
   registerIpcHandlers(ipcMain)
 
   createWindow()
-  createTray()
 
   startScheduler()
 
@@ -176,14 +121,12 @@ app.whenReady().then(async () => {
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform === 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('before-quit', () => {
-  app.isQuitting = true
   globalShortcut.unregisterAll()
   stopScheduler()
   stopAutoUpdater()
+  closeDB()
 })
