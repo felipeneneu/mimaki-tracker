@@ -70,7 +70,7 @@ export async function exportToExcel(opts: {
   const ws = wb.addWorksheet('Planilha1')
 
   // ── Row 1: Título merged ──────────────────────────────────────
-  ws.mergeCells('A1:P1')
+  ws.mergeCells('A1:Q1')
   const titleCell = ws.getCell('A1')
   titleCell.value = 'Consumo Impressão Mimaki'
   titleCell.font = {
@@ -87,7 +87,7 @@ export async function exportToExcel(opts: {
 
   // ── Row 3: Headers ────────────────────────────────────────────
   const headers = [
-    'Nome', 'Resoluçao', 'Passadas', 'Direcao da impressão',
+    'Nome', 'Cópia', 'Resoluçao', 'Passadas', 'Direcao da impressão',
     'C', 'M', 'Y', 'K', 'B', 'B2', 'V', 'V3',
     'Total', 'Tempo', 'Tamanho', 'Pagina'
   ]
@@ -123,6 +123,7 @@ export async function exportToExcel(opts: {
     const row = ws.getRow(4 + idx)
     const values = [
       job.job_name,
+      job.copy_number ?? '',
       formatResolution(job.resolution_dpi),
       job.pass_count ?? '',
       formatDirection(job.print_direction),
@@ -161,13 +162,14 @@ export async function exportToExcel(opts: {
 
   // ── Largura das colunas ────────────────────────────────────────
   ws.getColumn(1).width = 78
-  ws.getColumn(2).width = 20
-  ws.getColumn(3).width = 11
-  ws.getColumn(4).width = 22
-  ws.getColumn(12).width = 9.8
-  ws.getColumn(13).width = 8.7
-  ws.getColumn(14).width = 12.7
-  ws.getColumn(15).width = 18.1
+  ws.getColumn(2).width = 8
+  ws.getColumn(3).width = 20
+  ws.getColumn(4).width = 11
+  ws.getColumn(5).width = 22
+  ws.getColumn(13).width = 9.8
+  ws.getColumn(14).width = 8.7
+  ws.getColumn(15).width = 12.7
+  ws.getColumn(16).width = 18.1
 
   await wb.xlsx.writeFile(result.filePath)
 
