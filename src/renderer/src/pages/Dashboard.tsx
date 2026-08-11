@@ -6,18 +6,18 @@ import { useDashboard } from '../hooks/useDashboard'
 export default function Dashboard() {
   const { data: jobs = [], isLoading } = useDashboard()
 
-  const totalInk = jobs.reduce((acc, job) => acc + (job.ink_total_cc ?? 0), 0)
+  const totalInk = jobs.reduce((acc, job) => acc + (job.inkTotalCc ?? 0), 0)
 
-  const cyanCc = jobs.reduce((acc, job) => acc + (job.ink_cyan_cc ?? 0), 0)
-  const magentaCc = jobs.reduce((acc, job) => acc + (job.ink_magenta_cc ?? 0), 0)
-  const yellowCc = jobs.reduce((acc, job) => acc + (job.ink_yellow_cc ?? 0), 0)
-  const blackCc = jobs.reduce((acc, job) => acc + (job.ink_black_cc ?? 0), 0)
-  const white1Cc = jobs.reduce((acc, job) => acc + (job.ink_white1_cc ?? 0), 0)
-  const white2Cc = jobs.reduce((acc, job) => acc + (job.ink_white2_cc ?? 0), 0)
-  const varnish1Cc = jobs.reduce((acc, job) => acc + (job.ink_varnish1_cc ?? 0), 0)
-  const varnish2Cc = jobs.reduce((acc, job) => acc + (job.ink_varnish2_cc ?? 0), 0)
+  const cyanCc = jobs.reduce((acc, job) => acc + (job.inkCyanCc ?? 0), 0)
+  const magentaCc = jobs.reduce((acc, job) => acc + (job.inkMagentaCc ?? 0), 0)
+  const yellowCc = jobs.reduce((acc, job) => acc + (job.inkYellowCc ?? 0), 0)
+  const blackCc = jobs.reduce((acc, job) => acc + (job.inkBlackCc ?? 0), 0)
+  const white1Cc = jobs.reduce((acc, job) => acc + (job.inkWhite1Cc ?? 0), 0)
+  const white2Cc = jobs.reduce((acc, job) => acc + (job.inkWhite2Cc ?? 0), 0)
+  const varnish1Cc = jobs.reduce((acc, job) => acc + (job.inkVarnish1Cc ?? 0), 0)
+  const varnish2Cc = jobs.reduce((acc, job) => acc + (job.inkVarnish2Cc ?? 0), 0)
 
-  const printTimeMs = jobs.reduce((acc, job) => acc + (job.print_time_ms ?? 0), 0)
+  const printTimeMs = jobs.reduce((acc, job) => acc + (job.printTimeMs ?? 0), 0)
   const printTimeHours = printTimeMs / 1000 / 3600
 
   const pieData = [
@@ -121,9 +121,9 @@ export default function Dashboard() {
                       ) : (
                         recentJobs.map(job => (
                           <tr key={job.id} className="border-b border-bg-border/50 hover:bg-bg-elevated/50 transition-colors duration-200">
-                            <td className="py-3 font-medium text-brand-pink">{job.order_code ?? '—'}</td>
-                            <td className="py-3 text-text-primary truncate max-w-[200px]" title={job.job_name}>{job.job_name}</td>
-                            <td className="py-3 text-right tabular-nums">{job.ink_total_cc?.toFixed(2) ?? '—'}</td>
+                            <td className="py-3 font-medium text-brand-pink">{job.orderCode ?? '—'}</td>
+                            <td className="py-3 text-text-primary truncate max-w-[200px]" title={job.jobName}>{job.jobName}</td>
+                            <td className="py-3 text-right tabular-nums">{job.inkTotalCc?.toFixed(2) ?? '—'}</td>
                           </tr>
                         ))
                       )}

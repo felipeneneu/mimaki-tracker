@@ -28,11 +28,17 @@ const api = {
   // Validação de pasta Mf
   validateMfFolder: (path: string) => ipcRenderer.invoke('dialog:validateMf', path),
 
+  // Sincronização completa
+  syncResyncAll: () => ipcRenderer.invoke('sync:resync-all'),
+
   // Exportação
   exportExcel: (opts: { startDate?: string; endDate?: string }) =>
     ipcRenderer.invoke('export:excel', opts),
 
   exportApi: () => ipcRenderer.invoke('export:api'),
+
+  // Export README.txt
+  exportReadme: (jobId: number) => ipcRenderer.invoke('export:readme', jobId),
 
   // Diálogos nativos
   openFolderDialog: () => ipcRenderer.invoke('dialog:openFolder'),

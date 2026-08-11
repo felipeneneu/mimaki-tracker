@@ -1,38 +1,39 @@
 export interface JobRow {
   id: number
-  folder_timestamp: string
-  job_name: string
-  order_code: string | null
-  quantity_units: number | null
-  ink_cyan_cc: number | null
-  ink_magenta_cc: number | null
-  ink_yellow_cc: number | null
-  ink_black_cc: number | null
-  ink_white1_cc: number | null
-  ink_white2_cc: number | null
-  ink_varnish1_cc: number | null
-  ink_varnish2_cc: number | null
-  ink_total_cc: number | null
-  print_time_ms: number | null
-  rip_time_ms: number | null
-  width_mm: number | null
-  height_mm: number | null
-  spool_date: string | null
-  last_print_date: string | null
+  folderTimestamp: string
+  jobName: string
+  orderCode: string | null
+  quantityUnits: number | null
+  inkCyanCc: number | null
+  inkMagentaCc: number | null
+  inkYellowCc: number | null
+  inkBlackCc: number | null
+  inkWhite1Cc: number | null
+  inkWhite2Cc: number | null
+  inkVarnish1Cc: number | null
+  inkVarnish2Cc: number | null
+  inkTotalCc: number | null
+  printTimeMs: number | null
+  ripTimeMs: number | null
+  widthMm: number | null
+  heightMm: number | null
+  spoolDate: string | null
+  lastPrintDate: string | null
   pages: number | null
-  copy_number: number | null
-  pass_count: number | null
-  resolution_dpi: number | null
-  print_direction: string | null
-  raw_xml_path: string | null
-  synced_to_api: number
-  created_at: string
+  copyNumber: number | null
+  passCount: number | null
+  resolutionDpi: number | null
+  printDirection: string | null
+  rawXmlPath: string | null
+  syncedToApi: number
+  createdAt: string
 }
 
 export interface SyncResult {
   imported: number
   skipped: number
   total: number
+  deletedZeroInk: number
   errors: string[]
 }
 
@@ -55,6 +56,7 @@ declare global {
     api: {
       // Sincronização
       syncRun: () => Promise<SyncResult>
+      syncResyncAll: () => Promise<SyncResult>
       onSyncProgress: (callback: (data: { current: number; total: number; folder: string }) => void) => () => void
       onSyncCompleted: (callback: (result: SyncResult) => void) => () => void
 
@@ -78,6 +80,7 @@ declare global {
       // Exportação
       exportExcel: (opts: { startDate?: string; endDate?: string }) => Promise<{ filePath: string }>
       exportApi: () => Promise<{ count: number; error?: string }>
+      exportReadme: (jobId: number) => Promise<{ success: boolean; filePath?: string; error?: string }>
 
       // Diálogos
       openFolderDialog: () => Promise<string | null>

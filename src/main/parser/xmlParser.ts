@@ -399,8 +399,9 @@ export async function parseLayoutDirXml(xmlContent: string): Promise<LayoutData>
       const cn = cnVoid?.int?.[0] != null ? parseInt(String(cnVoid.int[0]), 10) : null
       if (cid) {
         compositeID = cid
-        copyNumber = cn
-        break
+        if (cn != null && (copyNumber == null || cn > copyNumber)) {
+          copyNumber = cn
+        }
       }
     }
   }

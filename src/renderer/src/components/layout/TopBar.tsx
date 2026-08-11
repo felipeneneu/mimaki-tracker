@@ -11,7 +11,7 @@ interface SyncProgress {
 
 export function TopBar({ title }: { title: string }) {
   const [progress, setProgress] = useState<SyncProgress | null>(null)
-  const [lastSyncResult, setLastSyncResult] = useState<{ imported: number; errs: number; errors: string[] } | null>(null)
+  const [lastSyncResult, setLastSyncResult] = useState<{ imported: number; deleted: number; errs: number; errors: string[] } | null>(null)
   const syncMutation = useSync()
   const qc = useQueryClient()
 
@@ -22,14 +22,17 @@ export function TopBar({ title }: { title: string }) {
     setProgress(null)
     try {
       const result = await syncMutation.mutateAsync()
-      setLastSyncResult({ imported: result.imported, errs: result.errors.length, errors: result.errors })
+      setLastSyncResult({ imported: result.imported, deleted: result.deletedZeroInk, errs: result.errors.length, errors: result.errors })
       if (result.imported > 0) {
         toast.success(`${result.imported} job(s) sincronizado(s)!`)
       } else if (result.errors.length === 0) {
         toast.info('Nenhum job novo encontrado.')
       }
+      if (result.deletedZeroInk > 0) {
+        toast.info(`${result.deletedZeroInk} job(s) com tinta zerada removido(s).`)
+      }
     } catch (e) {
-      setLastSyncResult({ imported: 0, errs: 1, errors: ['Erro de comunicação com o processo principal'] })
+      setLastSyncResult({ imported: 0, deleted: 0, errs: 1, errors: ['Erro de comunicação com o processo principal'] })
       toast.error('Erro ao sincronizar')
     } finally {
       setProgress(null)

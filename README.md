@@ -185,9 +185,9 @@ Formato que espelha a planilha `Consumo Mimaki.xlsx`:
 | Coluna | Descrição |
 |--------|-----------|
 | Nome | Nome do job |
-| Resoluçao | `600x600 VD` |
+| Resolução | `600x600 VD` |
 | Passadas | Número de passadas |
-| Direcao da impressão | Unidirecional/Bidirecional |
+| Direção da impressão | Unidirecional/Bidirecional |
 | C, M, Y, K, B, B2, V, V3 | Tinta por canal (cc) |
 | Total | Total de tinta (cc) |
 | Tempo | Tempo de impressão |

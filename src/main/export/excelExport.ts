@@ -122,22 +122,22 @@ export async function exportToExcel(opts: {
   jobs.forEach((job, idx) => {
     const row = ws.getRow(4 + idx)
     const values = [
-      job.job_name,
-      job.copy_number ?? '',
-      formatResolution(job.resolution_dpi),
-      job.pass_count ?? '',
-      formatDirection(job.print_direction),
-      formatInk(job.ink_cyan_cc),
-      formatInk(job.ink_magenta_cc),
-      formatInk(job.ink_yellow_cc),
-      formatInk(job.ink_black_cc),
-      formatInk(job.ink_white1_cc),
-      formatInk(job.ink_white2_cc),
-      formatInk(job.ink_varnish1_cc),
-      formatInk(job.ink_varnish2_cc),
-      formatInk(job.ink_total_cc),
-      formatMs(job.print_time_ms),
-      formatDimension(job.width_mm, job.height_mm),
+      job.jobName,
+      job.copyNumber ?? '',
+      formatResolution(job.resolutionDpi),
+      job.passCount ?? '',
+      formatDirection(job.printDirection),
+      formatInk(job.inkCyanCc),
+      formatInk(job.inkMagentaCc),
+      formatInk(job.inkYellowCc),
+      formatInk(job.inkBlackCc),
+      formatInk(job.inkWhite1Cc),
+      formatInk(job.inkWhite2Cc),
+      formatInk(job.inkVarnish1Cc),
+      formatInk(job.inkVarnish2Cc),
+      formatInk(job.inkTotalCc),
+      formatMs(job.printTimeMs),
+      formatDimension(job.widthMm, job.heightMm),
       job.pages ?? ''
     ]
 

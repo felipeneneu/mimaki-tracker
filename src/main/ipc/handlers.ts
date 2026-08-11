@@ -8,7 +8,7 @@ import {
   getDevPasswordHash, setDevPasswordHash, hashPassword,
   updateJobCopyNumber
 } from '../db/database'
-import { runSync } from '../sync/syncer'
+import { runSync, resyncAllJobs } from '../sync/syncer'
 import { parseLayoutDirXml } from '../parser/xmlParser'
 import { exportToExcel } from '../export/excelExport'
 import { syncToApi } from '../export/apiSync'
@@ -42,7 +42,21 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
       return result
     } catch (err: any) {
       console.error('[IPC] sync:run error:', err.message)
-      return { imported: 0, skipped: 0, total: 0, errors: [`Erro na sincronização: ${err.message}`] }
+      return { imported: 0, skipped: 0, total: 0, deletedZeroInk: 0, errors: [`Erro na sincronização: ${err.message}`] }
+    }
+  })
+
+  ipcMain.handle('sync:resync-all', async (event) => {
+    try {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      const result = await resyncAllJobs((current, total, folder) => {
+        win?.webContents.send('sync:progress', { current, total, folder })
+      })
+      win?.webContents.send('sync:completed', result)
+      return result
+    } catch (err: any) {
+      console.error('[IPC] sync:resync-all error:', err.message)
+      return { imported: 0, skipped: 0, total: 0, deletedZeroInk: 0, errors: [`Erro na re-sincronização: ${err.message}`] }
     }
   })
 
@@ -115,6 +129,67 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
       return await syncToApi()
     } catch (err: any) {
       return { count: 0, error: `Erro na sincronização com API: ${err.message}` }
+    }
+  })
+
+  ipcMain.handle('export:readme', async (event, jobId: number) => {
+    try {
+      const job = getJobById(jobId)
+      if (!job) {
+        return { success: false, error: 'Job não encontrado' }
+      }
+
+      const formatDate = (iso: string | null): string => {
+        if (!iso) return '—'
+        try {
+          return new Date(iso).toLocaleString('pt-BR')
+        } catch {
+          return iso
+        }
+      }
+
+      const content = [
+        `Passadas: ${job.passCount ?? '—'}`,
+        `Resolução (DPI): ${job.resolutionDpi ?? '—'}`,
+        `Direção: ${job.printDirection ?? '—'}`,
+        '',
+        `${job.jobName}`,
+        `Pedido: ${job.orderCode ?? '—'}`,
+        `Data (Spool): ${formatDate(job.spoolDate)}`,
+        `Dimensões: ${job.widthMm ?? '—'} × ${job.heightMm ?? '—'} mm`,
+        `Quantidade: ${job.quantityUnits ?? '—'} unid.`,
+        `Páginas: ${job.pages ?? '—'}`,
+        '',
+        'Informações Técnicas',
+        `ID da Pasta: ${job.folderTimestamp}`,
+        `Última Impressão: ${formatDate(job.lastPrintDate)}`,
+        `XML Original: ${job.rawXmlPath ?? '—'}`,
+        `Criado em: ${formatDate(job.createdAt)}`,
+        ''
+      ].join('\n')
+
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return { success: false, error: 'Janela não encontrada' }
+
+      const result = await dialog.showSaveDialog(win, {
+        title: 'Exportar README.txt',
+        defaultPath: `README_${job.folderTimestamp}.txt`,
+        filters: [
+          { name: 'Texto', extensions: ['txt'] },
+          { name: 'Todos os arquivos', extensions: ['*'] }
+        ]
+      })
+
+      if (result.canceled || !result.filePath) {
+        return { success: false, error: 'Cancelado pelo usuário' }
+      }
+
+      const { writeFileSync } = await import('fs')
+      writeFileSync(result.filePath, content, 'utf-8')
+
+      return { success: true, filePath: result.filePath }
+    } catch (err: any) {
+      return { success: false, error: `Erro ao exportar README: ${err.message}` }
     }
   })
 
@@ -410,9 +485,9 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
           let updated = 0
           let errors = 0
           for (const job of jobs) {
-            if (!job.raw_xml_path) { errors++; continue }
-            // Deriva o caminho do LayoutDir.xml a partir do raw_xml_path (ElementDir.xml)
-            const layPath = job.raw_xml_path
+            if (!job.rawXmlPath) { errors++; continue }
+            // Deriva o caminho do LayoutDir.xml a partir do rawXmlPath (ElementDir.xml)
+            const layPath = job.rawXmlPath
               .replace(/\\Elm\\/, '\\Lay\\')
               .replace(/\/Elm\//, '/Lay/')
               .replace(/ElementDir\.xml$/, 'LayoutDir.xml')

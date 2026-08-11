@@ -35,17 +35,17 @@ describe('exportToExcel', () => {
 
   it('throws when dialog is canceled', async () => {
     mockGetJobs.mockReturnValue([{
-      id: 1, folder_timestamp: '20260101_120000_001', job_name: 'test',
-      order_code: null, quantity_units: null,
-      ink_cyan_cc: null, ink_magenta_cc: null, ink_yellow_cc: null,
-      ink_black_cc: null, ink_white1_cc: null, ink_white2_cc: null,
-      ink_varnish1_cc: null, ink_varnish2_cc: null, ink_total_cc: null,
-      print_time_ms: null, rip_time_ms: null,
-      width_mm: null, height_mm: null,
-      spool_date: null, last_print_date: null,
-      pages: null, copy_number: null, pass_count: null, resolution_dpi: null,
-      print_direction: null, raw_xml_path: null,
-      synced_to_api: 0, created_at: '2026-01-01'
+      id: 1, folderTimestamp: '20260101_120000_001', jobName: 'test',
+      orderCode: null, quantityUnits: null,
+      inkCyanCc: null, inkMagentaCc: null, inkYellowCc: null,
+      inkBlackCc: null, inkWhite1Cc: null, inkWhite2Cc: null,
+      inkVarnish1Cc: null, inkVarnish2Cc: null, inkTotalCc: null,
+      printTimeMs: null, ripTimeMs: null,
+      widthMm: null, heightMm: null,
+      spoolDate: null, lastPrintDate: null,
+      pages: null, copyNumber: null, passCount: null, resolutionDpi: null,
+      printDirection: null, rawXmlPath: null,
+      syncedToApi: 0, createdAt: '2026-01-01'
     }])
     mockShowSaveDialog.mockResolvedValue({ canceled: true, filePath: undefined })
     await expect(exportToExcel({})).rejects.toThrow('cancelada pelo usuário')

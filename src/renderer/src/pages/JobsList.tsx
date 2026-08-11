@@ -50,12 +50,12 @@ export default function JobsList() {
   }
 
   const calcCost = (job: JobRow) => {
-    const cmyk = (job.ink_cyan_cc ?? 0) + (job.ink_magenta_cc ?? 0) + (job.ink_yellow_cc ?? 0) + (job.ink_black_cc ?? 0)
-    const white = (job.ink_white1_cc ?? 0) + (job.ink_white2_cc ?? 0)
-    const varnish = (job.ink_varnish1_cc ?? 0) + (job.ink_varnish2_cc ?? 0)
+    const cmyk = (job.inkCyanCc ?? 0) + (job.inkMagentaCc ?? 0) + (job.inkYellowCc ?? 0) + (job.inkBlackCc ?? 0)
+    const white = (job.inkWhite1Cc ?? 0) + (job.inkWhite2Cc ?? 0)
+    const varnish = (job.inkVarnish1Cc ?? 0) + (job.inkVarnish2Cc ?? 0)
 
     const inkCost = (cmyk * prices.cmyk) + (white * prices.white) + (varnish * prices.varnish)
-    const machineCost = ((job.print_time_ms ?? 0) / 1000 / 3600) * prices.machine
+    const machineCost = ((job.printTimeMs ?? 0) / 1000 / 3600) * prices.machine
 
     return inkCost + machineCost
   }
@@ -167,22 +167,22 @@ export default function JobsList() {
                       className="border-b border-bg-border/50 hover:bg-bg-elevated/50 cursor-pointer transition-colors duration-200"
                     >
                       <td className="px-4 py-2.5 whitespace-nowrap text-text-muted">
-                        {job.spool_date ? new Date(job.spool_date).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
+                        {job.spoolDate ? new Date(job.spoolDate).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
                       </td>
-                      <td className="px-4 py-2.5 font-medium text-brand-pink">{job.order_code ?? '—'}</td>
-                      <td className="px-4 py-2.5 text-text-primary max-w-[250px] truncate" title={job.job_name}>{job.job_name}</td>
+                      <td className="px-4 py-2.5 font-medium text-brand-pink">{job.orderCode ?? '—'}</td>
+                      <td className="px-4 py-2.5 text-text-primary max-w-[250px] truncate" title={job.jobName}>{job.jobName}</td>
                       <td className="px-4 py-2.5 text-right text-text-muted tabular-nums">
-                        {job.width_mm && job.height_mm ? `${job.width_mm.toFixed(0)} × ${job.height_mm.toFixed(0)} mm` : '—'}
+                        {job.widthMm && job.heightMm ? `${job.widthMm.toFixed(0)} × ${job.heightMm.toFixed(0)} mm` : '—'}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums font-medium text-text-primary">{job.ink_total_cc?.toFixed(2) ?? '—'}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums font-medium text-text-primary">{job.inkTotalCc?.toFixed(2) ?? '—'}</td>
                       <td className="px-4 py-2.5 text-center tabular-nums text-text-muted">
-                        {job.resolution_dpi ? `${job.resolution_dpi}` : '—'}
+                        {job.resolutionDpi ? `${job.resolutionDpi}` : '—'}
                       </td>
                       <td className="px-4 py-2.5 text-center tabular-nums text-text-muted">
-                        {job.pass_count ?? '—'}
+                        {job.passCount ?? '—'}
                       </td>
                       <td className="px-4 py-2.5 text-center text-text-muted">
-                        {job.print_direction === 'bidirecional' ? 'Bidir.' : job.print_direction === 'unidirecional' ? 'Unidir.' : '—'}
+                        {job.printDirection === 'bidirecional' ? 'Bidir.' : job.printDirection === 'unidirecional' ? 'Unidir.' : '—'}
                       </td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-text-primary">
                         {calcCost(job).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}

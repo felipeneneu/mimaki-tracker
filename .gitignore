@@ -3,6 +3,7 @@ node_modules/
 
 # Agents (local only)
 agent/*
+.opencode/
 
 # Build output
 out/
