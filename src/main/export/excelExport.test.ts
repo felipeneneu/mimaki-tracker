@@ -13,14 +13,16 @@ vi.mock('electron', () => ({
 }))
 
 vi.mock('../db/database', () => ({
-  getJobs: vi.fn()
+  getJobs: vi.fn(),
+  isJobComplete: vi.fn(() => true)
 }))
 
 import { exportToExcel } from './excelExport'
 import { dialog } from 'electron'
-import { getJobs } from '../db/database'
+import { getJobs, isJobComplete } from '../db/database'
 
 const mockGetJobs = vi.mocked(getJobs)
+const mockIsJobComplete = vi.mocked(isJobComplete)
 const mockShowSaveDialog = vi.mocked(dialog.showSaveDialog)
 
 describe('exportToExcel', () => {
@@ -30,7 +32,8 @@ describe('exportToExcel', () => {
 
   it('throws when no jobs match filters', async () => {
     mockGetJobs.mockReturnValue([])
-    await expect(exportToExcel({ startDate: '2026-01-01' })).rejects.toThrow('Nenhum job encontrado')
+    mockIsJobComplete.mockReturnValue(true)
+    await expect(exportToExcel({ startDate: '2026-01-01' })).rejects.toThrow('Nenhum job completo encontrado')
   })
 
   it('throws when dialog is canceled', async () => {
@@ -43,10 +46,11 @@ describe('exportToExcel', () => {
       printTimeMs: null, ripTimeMs: null,
       widthMm: null, heightMm: null,
       spoolDate: null, lastPrintDate: null,
-      pages: null, copyNumber: null, passCount: null, resolutionDpi: null,
+      pages: null, copyNumber: null, totalPrint: null, passCount: null, resolutionDpi: null,
       printDirection: null, rawXmlPath: null,
       syncedToApi: 0, createdAt: '2026-01-01'
     }])
+    mockIsJobComplete.mockReturnValue(true)
     mockShowSaveDialog.mockResolvedValue({ canceled: true, filePath: undefined })
     await expect(exportToExcel({})).rejects.toThrow('cancelada pelo usuário')
   })

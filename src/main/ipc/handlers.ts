@@ -1,12 +1,12 @@
 import { BrowserWindow, dialog, app, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import { copyFileSync, existsSync, unlinkSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { copyFileSync, existsSync, unlinkSync, readFileSync, writeFileSync } from 'fs'
+import { join, dirname } from 'path'
 import {
   getJobs, getJobById, getAllSettings, saveAllSettings,
   closeDB, getSetting, setSetting,
   getDevPasswordHash, setDevPasswordHash, hashPassword,
-  updateJobCopyNumber
+  updateJobCopyNumber, getMonthlyReport
 } from '../db/database'
 import { runSync, resyncAllJobs } from '../sync/syncer'
 import { parseLayoutDirXml } from '../parser/xmlParser'
@@ -132,6 +132,15 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
     }
   })
 
+  ipcMain.handle('report:monthly', () => {
+    try {
+      return getMonthlyReport()
+    } catch (err: any) {
+      console.error('[IPC] report:monthly error:', err.message)
+      return []
+    }
+  })
+
   ipcMain.handle('export:readme', async (event, jobId: number) => {
     try {
       const job = getJobById(jobId)
@@ -184,8 +193,11 @@ export function registerIpcHandlers(ipcMain: Electron.IpcMain): void {
         return { success: false, error: 'Cancelado pelo usuário' }
       }
 
-      const { writeFileSync } = await import('fs')
       writeFileSync(result.filePath, content, 'utf-8')
+
+      // Abre a pasta do arquivo salvo
+      const folder = dirname(result.filePath)
+      shell.openPath(folder)
 
       return { success: true, filePath: result.filePath }
     } catch (err: any) {

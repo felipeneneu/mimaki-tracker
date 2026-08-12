@@ -69,9 +69,11 @@ export function TopBar({ title }: { title: string }) {
             <>
               <span className="text-xs text-text-muted">
                 Último sync: {new Date().toLocaleTimeString()}
-                <span className={lastSyncResult.errs > 0 ? 'text-error ml-1' : 'text-success ml-1'}>
-                  ({lastSyncResult.imported} novos)
-                </span>
+                {lastSyncResult.imported > 0 && (
+                  <span className={lastSyncResult.errs > 0 ? 'text-error ml-1' : 'text-success ml-1'}>
+                    ({lastSyncResult.imported} novos)
+                  </span>
+                )}
               </span>
               {lastSyncResult.errs > 0 && lastSyncResult.errors.length > 0 && (
                 <span className="text-[10px] text-error max-w-[300px] text-right truncate" title={lastSyncResult.errors.join('\n')}>

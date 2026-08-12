@@ -24,6 +24,7 @@ export const jobs = sqliteTable('jobs', {
   lastPrintDate: text('last_print_date'),
   pages: integer('pages'),
   copyNumber: integer('copy_number'),
+  totalPrint: integer('total_print'),
   passCount: integer('pass_count'),
   resolutionDpi: integer('resolution_dpi'),
   printDirection: text('print_direction'),

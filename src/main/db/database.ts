@@ -1,9 +1,10 @@
 import Database from 'better-sqlite3'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
-import { eq, and, like, gte, lte, inArray, or, isNull, type SQL } from 'drizzle-orm'
+import { eq, and, like, gte, lte, inArray, or, isNull, gt, isNotNull, type SQL } from 'drizzle-orm'
 import { app } from 'electron'
 import { join } from 'path'
 import { createHash } from 'crypto'
+import { sql } from 'drizzle-orm'
 import * as schema from './schema'
 
 const { jobs, settings } = schema
@@ -76,7 +77,16 @@ function runMigrations(sqlite: Database.Database): void {
 
     CREATE INDEX IF NOT EXISTS idx_jobs_folder_timestamp ON jobs(folder_timestamp);
     CREATE INDEX IF NOT EXISTS idx_jobs_spool_date       ON jobs(spool_date);
+  `)
 
+  // Migration: adicionar coluna total_print se não existir
+  try {
+    sqlite.exec(`ALTER TABLE jobs ADD COLUMN total_print INTEGER;`)
+  } catch {
+    // Coluna já existe — ignora
+  }
+
+  sqlite.exec(`
     CREATE TABLE IF NOT EXISTS settings (
       key   TEXT PRIMARY KEY,
       value TEXT
@@ -147,12 +157,35 @@ export function insertJob(job: Omit<JobRow, 'id' | 'createdAt' | 'syncedToApi'>)
   }
 }
 
+/**
+ * Verifica se um job tem TODOS os campos obrigatórios preenchidos.
+ */
+export function isJobComplete(job: {
+  inkTotalCc: number | null
+  passCount: number | null
+  resolutionDpi: number | null
+  printDirection: string | null
+  pages: number | null
+  copyNumber: number | null
+}): boolean {
+  return (
+    job.inkTotalCc != null &&
+    job.inkTotalCc > 0 &&
+    job.passCount != null &&
+    job.resolutionDpi != null &&
+    job.printDirection != null &&
+    job.pages != null &&
+    job.copyNumber != null
+  )
+}
+
 export function getJobs(filters?: {
   startDate?: string
   endDate?: string
   search?: string
   inkMin?: number
   inkMax?: number
+  completeOnly?: boolean
 }): JobRow[] {
   try {
     const conditions: SQL[] = []
@@ -172,6 +205,18 @@ export function getJobs(filters?: {
     }
     if (filters?.inkMax != null) {
       conditions.push(lte(jobs.inkTotalCc, filters.inkMax))
+    }
+    if (filters?.completeOnly) {
+      conditions.push(
+        and(
+          gt(jobs.inkTotalCc, 0),
+          isNotNull(jobs.passCount),
+          isNotNull(jobs.resolutionDpi),
+          isNotNull(jobs.printDirection),
+          isNotNull(jobs.pages),
+          isNotNull(jobs.copyNumber)
+        )!
+      )
     }
 
     return db
@@ -227,6 +272,67 @@ export function deleteZeroInkJobs(): number {
   } catch (err: any) {
     console.error('[DB] Erro ao deletar jobs com tinta zerada:', err.message)
     return 0
+  }
+}
+
+// ────────────────────────────────────────────────────────────────
+// Monthly Report
+// ────────────────────────────────────────────────────────────────
+
+export interface MonthlyReportRow {
+  month: string
+  cyanCc: number
+  magentaCc: number
+  yellowCc: number
+  blackCc: number
+  white1Cc: number
+  white2Cc: number
+  varnish1Cc: number
+  varnish2Cc: number
+  totalInkCc: number
+  jobCount: number
+  totalPrintTimeMs: number
+}
+
+export function getMonthlyReport(): MonthlyReportRow[] {
+  try {
+    const rows = db.all(sql`
+      SELECT
+        substr(spool_date, 1, 7) as month,
+        COALESCE(SUM(ink_cyan_cc), 0) as cyan_cc,
+        COALESCE(SUM(ink_magenta_cc), 0) as magenta_cc,
+        COALESCE(SUM(ink_yellow_cc), 0) as yellow_cc,
+        COALESCE(SUM(ink_black_cc), 0) as black_cc,
+        COALESCE(SUM(ink_white1_cc), 0) as white1_cc,
+        COALESCE(SUM(ink_white2_cc), 0) as white2_cc,
+        COALESCE(SUM(ink_varnish1_cc), 0) as varnish1_cc,
+        COALESCE(SUM(ink_varnish2_cc), 0) as varnish2_cc,
+        COALESCE(SUM(ink_total_cc), 0) as total_ink_cc,
+        COUNT(*) as job_count,
+        COALESCE(SUM(print_time_ms), 0) as total_print_time_ms
+      FROM jobs
+      WHERE spool_date IS NOT NULL
+      GROUP BY month
+      ORDER BY month DESC
+    `) as any[]
+
+    return rows.map(r => ({
+      month: r.month,
+      cyanCc: r.cyan_cc,
+      magentaCc: r.magenta_cc,
+      yellowCc: r.yellow_cc,
+      blackCc: r.black_cc,
+      white1Cc: r.white1_cc,
+      white2Cc: r.white2_cc,
+      varnish1Cc: r.varnish1_cc,
+      varnish2Cc: r.varnish2_cc,
+      totalInkCc: r.total_ink_cc,
+      jobCount: r.job_count,
+      totalPrintTimeMs: r.total_print_time_ms
+    }))
+  } catch (err: any) {
+    console.error('[DB] Erro ao buscar relatório mensal:', err.message)
+    return []
   }
 }
 

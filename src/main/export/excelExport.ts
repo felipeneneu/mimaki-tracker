@@ -1,6 +1,7 @@
-import { BrowserWindow, dialog } from 'electron'
+import { BrowserWindow, dialog, shell } from 'electron'
+import { dirname } from 'path'
 import * as ExcelJS from 'exceljs'
-import { getJobs } from '../db/database'
+import { getJobs, isJobComplete } from '../db/database'
 
 function formatMs(ms: number | null): string {
   if (ms == null) return ''
@@ -39,10 +40,11 @@ export async function exportToExcel(opts: {
   if (opts.startDate) filters.startDate = opts.startDate
   if (opts.endDate) filters.endDate = opts.endDate
 
-  const jobs = getJobs(filters)
+  const allJobs = getJobs(filters)
+  const jobs = allJobs.filter(isJobComplete)
 
   if (jobs.length === 0) {
-    throw new Error('Nenhum job encontrado para exportar com os filtros selecionados.')
+    throw new Error('Nenhum job completo encontrado para exportar com os filtros selecionados.')
   }
 
   const mainWindow = BrowserWindow.getAllWindows()[0] ?? BrowserWindow.getFocusedWindow()
@@ -70,7 +72,7 @@ export async function exportToExcel(opts: {
   const ws = wb.addWorksheet('Planilha1')
 
   // ── Row 1: Título merged ──────────────────────────────────────
-  ws.mergeCells('A1:Q1')
+  ws.mergeCells('A1:P1')
   const titleCell = ws.getCell('A1')
   titleCell.value = 'Consumo Impressão Mimaki'
   titleCell.font = {
@@ -87,9 +89,9 @@ export async function exportToExcel(opts: {
 
   // ── Row 3: Headers ────────────────────────────────────────────
   const headers = [
-    'Nome', 'Cópia', 'Resoluçao', 'Passadas', 'Direcao da impressão',
+    'Nome', 'Resoluçao', 'Passadas', 'Direcao da impressão',
     'C', 'M', 'Y', 'K', 'B', 'B2', 'V', 'V3',
-    'Total', 'Tempo', 'Tamanho', 'Pagina'
+    'Total', 'Total Impressão', 'Tempo', 'Tamanho'
   ]
 
   const headerRow = ws.getRow(3)
@@ -123,7 +125,6 @@ export async function exportToExcel(opts: {
     const row = ws.getRow(4 + idx)
     const values = [
       job.jobName,
-      job.copyNumber ?? '',
       formatResolution(job.resolutionDpi),
       job.passCount ?? '',
       formatDirection(job.printDirection),
@@ -136,9 +137,9 @@ export async function exportToExcel(opts: {
       formatInk(job.inkVarnish1Cc),
       formatInk(job.inkVarnish2Cc),
       formatInk(job.inkTotalCc),
+      job.totalPrint ?? '',
       formatMs(job.printTimeMs),
-      formatDimension(job.widthMm, job.heightMm),
-      job.pages ?? ''
+      formatDimension(job.widthMm, job.heightMm)
     ]
 
     values.forEach((val, i) => {
@@ -162,16 +163,18 @@ export async function exportToExcel(opts: {
 
   // ── Largura das colunas ────────────────────────────────────────
   ws.getColumn(1).width = 78
-  ws.getColumn(2).width = 8
-  ws.getColumn(3).width = 20
-  ws.getColumn(4).width = 11
-  ws.getColumn(5).width = 22
-  ws.getColumn(13).width = 9.8
-  ws.getColumn(14).width = 8.7
+  ws.getColumn(2).width = 20
+  ws.getColumn(3).width = 11
+  ws.getColumn(4).width = 22
+  ws.getColumn(14).width = 14
   ws.getColumn(15).width = 12.7
   ws.getColumn(16).width = 18.1
 
   await wb.xlsx.writeFile(result.filePath)
+
+  // Abre a pasta do arquivo salvo
+  const folder = dirname(result.filePath)
+  shell.openPath(folder)
 
   return { filePath: result.filePath }
 }

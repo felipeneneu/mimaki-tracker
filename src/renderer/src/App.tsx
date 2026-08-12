@@ -9,6 +9,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const JobsList = lazy(() => import('./pages/JobsList'))
 const JobDetail = lazy(() => import('./pages/JobDetail'))
 const Settings = lazy(() => import('./pages/Settings'))
+const MonthlyReport = lazy(() => import('./pages/MonthlyReport'))
 
 function PageLoader() {
   return (
@@ -24,6 +25,7 @@ function PageLoader() {
 const routeTitles: Record<string, string> = {
   '/': 'Dashboard',
   '/jobs': 'Histórico de Jobs',
+  '/reports/monthly': 'Relatório Mensal',
   '/settings': 'Configurações',
 }
 
@@ -54,6 +56,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/jobs" element={<JobsList />} />
           <Route path="/jobs/:id" element={<JobDetail />} />
+          <Route path="/reports/monthly" element={<MonthlyReport />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

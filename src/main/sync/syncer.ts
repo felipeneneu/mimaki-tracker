@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { parseElementDirXml, parseCompositeDirXml, parseLayoutDirXml } from '../parser/xmlParser'
-import { insertJob, getSetting, setSetting, deleteZeroInkJobs, getDB } from '../db/database'
+import { insertJob, getSetting, setSetting, deleteZeroInkJobs, getDB, isJobComplete } from '../db/database'
 import { jobs } from '../db/schema'
 
 const TIMESTAMP_REGEX = /^\d{8}_\d{6}_\d{3}$/
@@ -181,7 +181,11 @@ async function runSyncInternal(
         }
       }
 
-      insertJob({
+      const totalPrint = (copyNumber != null && parsed.pages != null)
+        ? copyNumber * parsed.pages
+        : null
+
+      const jobData = {
         folderTimestamp: folder,
         jobName: parsed.jobName,
         orderCode: parsed.orderCode,
@@ -203,12 +207,19 @@ async function runSyncInternal(
         lastPrintDate: parsed.lastPrintDate,
         pages: parsed.pages,
         copyNumber: copyNumber,
+        totalPrint: totalPrint,
         passCount: passCount,
         resolutionDpi: resolutionDpi,
         printDirection: printDirection,
         rawXmlPath: elmXmlPath
-      })
+      }
 
+      if (!isJobComplete(jobData)) {
+        result.skipped++
+        continue
+      }
+
+      insertJob(jobData)
       result.imported++
       if (folder > maxProcessed) maxProcessed = folder
     } catch (err: any) {
@@ -377,8 +388,11 @@ async function resyncAllJobsInternal(
         }
       }
 
-      // Upsert com Drizzle
-      db.insert(jobs).values({
+      const totalPrint = (copyNumber != null && parsed.pages != null)
+        ? copyNumber * parsed.pages
+        : null
+
+      const jobData = {
         folderTimestamp: folder,
         jobName: parsed.jobName,
         orderCode: parsed.orderCode,
@@ -400,38 +414,22 @@ async function resyncAllJobsInternal(
         lastPrintDate: parsed.lastPrintDate,
         pages: parsed.pages,
         copyNumber: copyNumber,
+        totalPrint: totalPrint,
         passCount: passCount,
         resolutionDpi: resolutionDpi,
         printDirection: printDirection,
         rawXmlPath: elmXmlPath
-      }).onConflictDoUpdate({
+      }
+
+      if (!isJobComplete(jobData)) {
+        result.skipped++
+        continue
+      }
+
+      // Upsert com Drizzle
+      db.insert(jobs).values(jobData).onConflictDoUpdate({
         target: jobs.folderTimestamp,
-        set: {
-          jobName: parsed.jobName,
-          orderCode: parsed.orderCode,
-          quantityUnits: parsed.quantityUnits,
-          inkCyanCc: parsed.inkCyanCc,
-          inkMagentaCc: parsed.inkMagentaCc,
-          inkYellowCc: parsed.inkYellowCc,
-          inkBlackCc: parsed.inkBlackCc,
-          inkWhite1Cc: parsed.inkWhite1Cc,
-          inkWhite2Cc: parsed.inkWhite2Cc,
-          inkVarnish1Cc: parsed.inkVarnish1Cc,
-          inkVarnish2Cc: parsed.inkVarnish2Cc,
-          inkTotalCc: parsed.inkTotalCc,
-          printTimeMs: parsed.printTimeMs,
-          ripTimeMs: parsed.ripTimeMs,
-          widthMm: parsed.widthMm,
-          heightMm: parsed.heightMm,
-          spoolDate: parsed.spoolDate,
-          lastPrintDate: parsed.lastPrintDate,
-          pages: parsed.pages,
-          copyNumber: copyNumber,
-          passCount: passCount,
-          resolutionDpi: resolutionDpi,
-          printDirection: printDirection,
-          rawXmlPath: elmXmlPath
-        }
+        set: jobData
       }).run()
 
       result.imported++

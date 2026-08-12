@@ -21,6 +21,7 @@ export interface JobRow {
   lastPrintDate: string | null
   pages: number | null
   copyNumber: number | null
+  totalPrint: number | null
   passCount: number | null
   resolutionDpi: number | null
   printDirection: string | null
@@ -49,6 +50,21 @@ export interface DevAccessResult {
   blocked?: boolean
   remainingMinutes?: number
   error?: string
+}
+
+export interface MonthlyReportRow {
+  month: string
+  cyanCc: number
+  magentaCc: number
+  yellowCc: number
+  blackCc: number
+  white1Cc: number
+  white2Cc: number
+  varnish1Cc: number
+  varnish2Cc: number
+  totalInkCc: number
+  jobCount: number
+  totalPrintTimeMs: number
 }
 
 declare global {
@@ -114,6 +130,9 @@ declare global {
       onUpdateDownloaded: (callback: (info: { version: string }) => void) => () => void
       onUpdateStatus: (callback: (status: string) => void) => () => void
       onUpdateError: (callback: (error: string) => void) => () => void
+
+      // Relatório mensal
+      monthlyReport: () => Promise<MonthlyReportRow[]>
     }
   }
 }

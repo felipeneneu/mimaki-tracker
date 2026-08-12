@@ -77,6 +77,9 @@ const api = {
     return () => ipcRenderer.removeListener('dev:access-granted', callback)
   },
 
+  // Relatório mensal
+  monthlyReport: () => ipcRenderer.invoke('report:monthly'),
+
   // Auto-update
   checkForUpdates: () => ipcRenderer.invoke('update:check'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
