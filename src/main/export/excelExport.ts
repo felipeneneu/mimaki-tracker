@@ -72,7 +72,7 @@ export async function exportToExcel(opts: {
   const ws = wb.addWorksheet('Planilha1')
 
   // ── Row 1: Título merged ──────────────────────────────────────
-  ws.mergeCells('A1:P1')
+  ws.mergeCells('A1:Q1')
   const titleCell = ws.getCell('A1')
   titleCell.value = 'Consumo Impressão Mimaki'
   titleCell.font = {
@@ -91,7 +91,7 @@ export async function exportToExcel(opts: {
   const headers = [
     'Nome', 'Resoluçao', 'Passadas', 'Direcao da impressão',
     'C', 'M', 'Y', 'K', 'B', 'B2', 'V', 'V3',
-    'Total', 'Total Impressão', 'Tempo', 'Tamanho'
+    'Total', 'Total Impressão', 'Tempo', 'Tamanho', 'Data da Impressão'
   ]
 
   const headerRow = ws.getRow(3)
@@ -139,7 +139,8 @@ export async function exportToExcel(opts: {
       formatInk(job.inkTotalCc),
       job.totalPrint ?? '',
       formatMs(job.printTimeMs),
-      formatDimension(job.widthMm, job.heightMm)
+      formatDimension(job.widthMm, job.heightMm),
+      job.lastPrintDate ?? ''
     ]
 
     values.forEach((val, i) => {
@@ -169,6 +170,7 @@ export async function exportToExcel(opts: {
   ws.getColumn(14).width = 14
   ws.getColumn(15).width = 12.7
   ws.getColumn(16).width = 18.1
+  ws.getColumn(17).width = 20
 
   await wb.xlsx.writeFile(result.filePath)
 
